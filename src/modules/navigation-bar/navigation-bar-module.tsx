@@ -27,8 +27,6 @@ export function NavigationBarModule() {
 
     console.log(nodes);
     console.log(edges);
-    
-    
   }
 
   return (

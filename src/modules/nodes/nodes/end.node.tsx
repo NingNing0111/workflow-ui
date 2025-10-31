@@ -65,4 +65,5 @@ export const metadata: RegisterNodeMetadata<EndNodeData> = {
     label: '结束',
     deletable: false,
   },
+  requiredVariable: []
 }

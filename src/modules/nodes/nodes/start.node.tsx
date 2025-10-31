@@ -64,4 +64,5 @@ export const metadata: RegisterNodeMetadata<StartNodeData> = {
     label: '开始',
     deletable: false,
   },
+  requiredVariable: []
 }

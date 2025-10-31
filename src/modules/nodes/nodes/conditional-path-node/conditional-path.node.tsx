@@ -256,4 +256,5 @@ export const metadata: RegisterNodeMetadata<ConditionalPathNodeData> = {
     condition: null,
     paths: [],
   },
+  requiredVariable: []
 }

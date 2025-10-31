@@ -15,6 +15,7 @@ import { useNodeAutoAdjust } from '~/modules/flow-builder/hooks/use-node-auto-ad
 import { useOnNodesDelete } from '~/modules/flow-builder/hooks/use-on-nodes-delete'
 import { NODE_TYPES } from '~/modules/nodes'
 import { useApplicationState } from '~/stores/application-state'
+import { produce } from 'immer'
 
 const edgeTypes: EdgeTypes = {
   deletable: CustomDeletableEdge,
@@ -34,7 +35,7 @@ export function FlowBuilderModule() {
     onEdgesChange,
   ] = useEdgesState<Edge>(defaultEdges)
 
-  const { getNodes } = useReactFlow()
+  const { getNodes, setNodes, getNode } = useReactFlow()
 
   const deleteKeyCode = useDeleteKeyCode()
   const onNodesDelete = useOnNodesDelete(nodes)
@@ -49,8 +50,33 @@ export function FlowBuilderModule() {
     (connection: Connection) => {
       const edge = { ...connection, id: nanoid(), type: 'deletable' } as Edge
       setEdges(edges => addEdge(edge, edges))
+
+      const { source, target } = connection;
+      const sourceNode = getNode(source);
+      const targetNode = getNode(target);
+
+      console.log("SourceNode:", sourceNode);
+      console.log("TargetNode:", targetNode);
+
+      // 如果源节点是Prompt节点，目标是 LLM 节点 则需要更新LLM的数据
+      if (sourceNode?.type === 'prompt' && targetNode?.type === 'llm') {
+        // 
+        setNodes(nodes => produce(nodes, draft => {
+          const node = draft.find(n => n.id === target)
+          if (node) {
+            if (sourceNode.data.promptType === 'user') {
+              node.data.userMessage = sourceNode.data.promptCode
+
+            } else {
+              node.data.systemMessage = sourceNode.data.promptCode
+            }
+          }
+
+        }))
+
+      }
     },
-    [setEdges],
+    [setEdges, setNodes],
   )
 
   const handleAutoAdjustNodeAfterNodeMeasured = useCallback(

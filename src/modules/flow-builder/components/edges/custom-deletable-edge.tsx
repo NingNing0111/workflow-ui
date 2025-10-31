@@ -64,7 +64,7 @@ export default function CustomDeletableEdge(props: EdgeProps) {
 
       {/* 保留原来的 label 渲染器，可恢复删除按钮 */}
       <EdgeLabelRenderer>
-        <>q</>
+        <></>
         {/* 这里可以放删除按钮等 */}
         {/* 
         <button

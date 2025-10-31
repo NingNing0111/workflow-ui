@@ -45,6 +45,7 @@ export function NodePropertiesPanel() {
 
   return (
     <SidebarPanelWrapper>
+
       <SplitPane
         sizes={paneSizes}
         sashRender={() => <div className="bg-dark-300) <md:hover(scale-y-100 h-0.5 bg-dark-300 transition hover:(scale-y-200 bg-teal-800/50)" />}
@@ -94,6 +95,7 @@ export function NodePropertiesPanel() {
           </div>
         </Pane>
       </SplitPane>
+
     </SidebarPanelWrapper>
   )
 }

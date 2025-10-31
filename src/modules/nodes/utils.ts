@@ -20,6 +20,20 @@ export function createNodeData<T extends BuilderNodeType>(type: T, data: any) {
   }
 }
 
+export function createNodeDataWithId<T extends BuilderNodeType>(id: string, type: T, data: any) {
+  return {
+    id: id,
+    type,
+    data,
+  }
+}
+
+export function createNodeWithDefaultId(id: string, type: BuilderNodeType, data?: Partial<Node>) {
+  const defaultData = NODES.find(node => node.type === type)?.defaultData
+  if (!defaultData) { throw new Error(`No default data found for node type "${type}"`) }
+  return Object.assign(createNodeDataWithId(id, type, defaultData), data) as Node
+}
+
 export function createNodeWithDefaultData(type: BuilderNodeType, data?: Partial<Node>) {
   const defaultData = NODES.find(node => node.type === type)?.defaultData
   if (!defaultData) { throw new Error(`No default data found for node type "${type}"`) }

@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+    spring-ai-alibaba:
+        image: 'sca-registry.cn-hangzhou.cr.aliyuncs.com/spring-ai-alibaba/playground:1.0.0.2-x'
+        container_name: spring-ai-alibaba-playground
+        environment:
+            - AI_DASHSCOPE_API_KEY=sk-0de22e46094946b6ab6db7db30cefe90
+        ports:
+            - '8085:8080'

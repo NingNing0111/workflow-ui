@@ -182,4 +182,6 @@ export const metadata: RegisterNodeMetadata<TextMessageNodeData> = {
     message: '',
   },
   propertyPanel: TextMessageNodePropertyPanel,
+  requiredVariable: [],
+  available: false
 }

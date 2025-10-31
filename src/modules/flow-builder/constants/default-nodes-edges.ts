@@ -2,41 +2,32 @@ import type { TextMessageNodeData } from '~/modules/nodes/nodes/text-message-nod
 
 import { nanoid } from 'nanoid'
 
-import { BuilderNode } from '~/modules/nodes/types'
-import { createNodeWithData, createNodeWithDefaultData } from '~/modules/nodes/utils'
+import { BuilderNode, DEFAULT_END_ID, DEFAULT_START_ID } from '~/modules/nodes/types'
+import { createNodeWithData, createNodeWithDefaultData, createNodeWithDefaultId } from '~/modules/nodes/utils'
 
-const startNode = createNodeWithDefaultData(BuilderNode.START, { position: { x: 0, y: 267 } })
-const textMessageNode = createNodeWithData<TextMessageNodeData>(BuilderNode.TEXT_MESSAGE, {
-  channel: 'whatsapp',
-  message: 'If you like this project, give it a star on GitHub! ⭐️ and connect with me on LinkedIn 🚀. See top right corner or in bottom bar (mobile)',
-  deletable: true,
-}, { position: { x: 300, y: -140 } })
-const mobileResponsiveInformationTextMessageNode = createNodeWithData<TextMessageNodeData>(BuilderNode.TEXT_MESSAGE, {
-  channel: 'telegram',
-  message: 'This project is mobile responsive! 📱 Try it out on your mobile device! 🚀',
-  deletable: true,
-}, { position: { x: 300, y: 180 } })
-const edgeDropInformationTextMessageNode = createNodeWithData<TextMessageNodeData>(BuilderNode.TEXT_MESSAGE, {
-  channel: 'messenger',
-  message: 'Now you can add new nodes by dropping edge on the canvas! Try it out! Drag the edge from this node to any empty space on the canvas. 🎉',
-  deletable: true,
-}, { position: { x: 300, y: 460 } })
-const endNode = createNodeWithDefaultData(BuilderNode.END, { position: { x: 800, y: 267 } })
+const startNode = createNodeWithDefaultId(DEFAULT_START_ID,BuilderNode.START, { position: { x: 0, y: 267 } })
+const userInputNode = createNodeWithDefaultData(BuilderNode.USER_INPUT, { position: { x: 230, y: -140 } })
+const systemPromptNode = createNodeWithDefaultData(BuilderNode.PROMPT, { position: { x: 550, y: 200 } })
+const userPromptNode = createNodeWithDefaultData(BuilderNode.PROMPT, { position: { x: 550, y: 200 } })
+const llmNode = createNodeWithDefaultData(BuilderNode.LLM, { position: { x: 850, y: -67 } })
+const llmOutputNode = createNodeWithDefaultData(BuilderNode.LLM_OUTPUT, { position: { x: 1200, y: 200 } })
+const endNode = createNodeWithDefaultId(DEFAULT_END_ID,BuilderNode.END, { position: { x: 1500, y: -100 } })
 
 const nodes = [
   startNode,
-  textMessageNode,
-  mobileResponsiveInformationTextMessageNode,
-  edgeDropInformationTextMessageNode,
+  userInputNode,
+  userPromptNode,
+  llmNode,
+  llmOutputNode,
   endNode,
 ]
 
 const edges = [
-  { id: nanoid(), source: startNode.id, target: textMessageNode.id, type: 'deletable' },
-  { id: nanoid(), source: startNode.id, target: mobileResponsiveInformationTextMessageNode.id, type: 'deletable' },
-  { id: nanoid(), source: startNode.id, target: edgeDropInformationTextMessageNode.id, type: 'deletable' },
-  { id: nanoid(), source: mobileResponsiveInformationTextMessageNode.id, target: endNode.id, type: 'deletable' },
-  { id: nanoid(), source: textMessageNode.id, target: endNode.id, type: 'deletable' },
+  { id: nanoid(), source: startNode.id, target: userInputNode.id, type: 'deletable' },
+  { id: nanoid(), source: userInputNode.id, target: userPromptNode.id, type: 'deletable' },
+  { id: nanoid(), source: userPromptNode.id, target: llmNode.id, type: 'deletable' },
+  { id: nanoid(), source: llmNode.id, target: llmOutputNode.id, type: 'deletable' },
+  { id: nanoid(), source: llmOutputNode.id, target: endNode.id, type: 'deletable' },
 ]
 
 export {
