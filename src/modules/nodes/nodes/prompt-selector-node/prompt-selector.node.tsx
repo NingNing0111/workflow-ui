@@ -14,16 +14,16 @@ import { useApplicationState } from '~/stores/application-state'
 import { toast } from 'sonner'
 import PromptNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/prompt-property-panel'
 
-const NODE_TYPE = BuilderNode.PROMPT
+const NODE_TYPE = BuilderNode.PROMPT_SELECTOR
 
-export interface PromptNodeData extends BaseNodeData {
+export interface PromptSelectorNodeData {
     promptCode: string;
     promptType: 'system' | 'user'
 }
 
-type PromptNodeProps = NodeProps<Node<PromptNodeData, typeof NODE_TYPE>>
+type PromptSelectorNodeProps = NodeProps<Node<BaseNodeData<PromptSelectorNodeData>, typeof NODE_TYPE>>
 
-export function UserInputNode({ id, isConnectable, selected, data }: PromptNodeProps) {
+export function UserInputNode({ id, isConnectable, selected, data }: PromptSelectorNodeProps) {
     const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
     const { setNodes } = useReactFlow()
     const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
@@ -101,9 +101,9 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptNodeP
                         <label className="text-dark-50 text-[11px] uppercase">提示词类型</label>
                         <div className={cn(
                             'inline-flex items-center justify-center rounded-md px-2 py-1 text-[11px] font-medium w-fit',
-                            data.promptType === 'system' ? 'bg-blue-900/30 text-blue-300' : 'bg-amber-900/30 text-amber-300'
+                            data.nodeConfig.promptType === 'system' ? 'bg-blue-900/30 text-blue-300' : 'bg-amber-900/30 text-amber-300'
                         )}>
-                            {data.promptType}
+                            {data.nodeConfig.promptType}
                         </div>
                     </div>
 
@@ -111,7 +111,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptNodeP
                         <label className="text-dark-50 text-[11px] uppercase">提示词编码</label>
                         <div className="flex items-center gap-1">
                             <div className="flex-1 truncate bg-dark-100/50 border border-dark-200 rounded-md px-2 py-1 text-light-900 text-xs select-text">
-                                {data.promptCode}
+                                {data.nodeConfig.promptCode}
                             </div>
                             <button
                                 title="复制编码"
@@ -134,7 +134,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptNodeP
                 </div>
             </div>
 
-            { data.promptType === 'user' && <CustomHandle
+            {data.promptType === 'user' && <CustomHandle
                 type="target"
                 id={targetHandleId}
                 position={Position.Left}
@@ -152,7 +152,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptNodeP
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const metadata: RegisterNodeMetadata<PromptNodeData> = {
+export const metadata: RegisterNodeMetadata<BaseNodeData<PromptSelectorNodeData>> = {
     type: NODE_TYPE,
     node: memo(UserInputNode),
     detail: {
@@ -165,8 +165,15 @@ export const metadata: RegisterNodeMetadata<PromptNodeData> = {
         outputs: 1,
     },
     defaultData: {
-        promptCode: 'default',
-        promptType: 'user'
+        label: '提示词选择器',
+        inputConfig: {
+            userInputs: [],
+            refInputs: []
+        },
+        nodeConfig: {
+            promptCode: 'default',
+            promptType: 'user'
+        }
     },
     propertyPanel: PromptNodePropertyPanel,
     requiredVariable: []

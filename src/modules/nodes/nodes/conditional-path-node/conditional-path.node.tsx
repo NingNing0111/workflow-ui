@@ -29,7 +29,7 @@ const caseList = [
 
 const NODE_TYPE = BuilderNode.CONDITIONAL_PATH
 
-export interface ConditionalPathNodeData extends BaseNodeData {
+export interface ConditionalPathNodeData {
   condition: {
     id: string;
     condition: string;
@@ -37,7 +37,7 @@ export interface ConditionalPathNodeData extends BaseNodeData {
   paths: { id: string; case: { id: string; value: string } }[];
 }
 
-type ConditionalPathNodeProps = NodeProps<Node<ConditionalPathNodeData, typeof NODE_TYPE>>
+type ConditionalPathNodeProps = NodeProps<Node<BaseNodeData<ConditionalPathNodeData>, typeof NODE_TYPE>>
 
 export function ConditionalPathNode({ id, isConnectable, selected, data }: ConditionalPathNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])

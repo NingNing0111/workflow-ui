@@ -38,9 +38,17 @@ export function DesktopSidebarFragment({ isMobileView, activePanel, setActivePan
 
           <div className="mx-a h-px w-4 bg-dark-100" />
 
+          <SidebarButtonItem active={activePanel === 'exist-nodes'} onClick={() => setActivePanel('exist-nodes')}>
+            <div className="i-mynaui:package size-5" />
+          </SidebarButtonItem>
+          
+          <div className="mx-a h-px w-4 bg-dark-100" />
+
           <SidebarButtonItem active={activePanel === 'node-properties'} onClick={() => setActivePanel('node-properties')}>
             <div className="i-mynaui:layers-three size-5" />
           </SidebarButtonItem>
+
+
         </div>
       </div>
     </div>

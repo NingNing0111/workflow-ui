@@ -39,7 +39,7 @@ export function NavigationBarModule() {
         <div className="flex items-center py-0.5 pl-2">
           <div className="size-8 flex shrink-0 select-none items-center justify-center rounded-lg bg-teal-600 text-sm font-bold leading-none">
             <span className="translate-y-px">
-              DS
+              WK
             </span>
           </div>
 
@@ -49,7 +49,7 @@ export function NavigationBarModule() {
             </div>
 
             <div className="text-xs text-light-50/60 leading-none">
-              create by Ning
+              create by HuiCe
             </div>
           </div>
         </div>

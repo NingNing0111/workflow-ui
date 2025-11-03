@@ -3,31 +3,37 @@ import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
 import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { BuilderNode } from '~/modules/nodes/types'
 
 import { getNodeDetail } from '~/modules/nodes/utils'
+import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
+import { useApplicationState } from '~/stores/application-state'
 
-export interface StartNodeData extends BaseNodeData {
-  label?: string;
+export interface StartNodeData  {
 }
 
 const NODE_TYPE = BuilderNode.START
 
-type StartNodeProps = NodeProps<Node<StartNodeData, typeof NODE_TYPE>>
+type StartNodeProps = NodeProps<Node<BaseNodeData<StartNodeData>, typeof NODE_TYPE>>
 
-export function StartNode({ data, selected, isConnectable }: StartNodeProps) {
+export function StartNode({ id,data, selected, isConnectable }: StartNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
-
+const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
   const [sourceHandleId] = useState<string>(nanoid())
+    const showNodeProperties = useCallback(() => {
+        showNodePropertiesOf({ id, type: NODE_TYPE })
+    }, [id, showNodePropertiesOf])
+
 
   return (
     <>
       <div
         data-selected={selected}
         className="flex items-center border border-dark-100 rounded-full bg-dark-300 px-4 py-2 shadow-sm transition data-[selected=true]:(border-teal-600 ring-1 ring-teal-600/50)"
+        onDoubleClick={showNodeProperties}
       >
         <div className={cn(meta.icon, 'size-4.5 shrink-0 mr-2 scale-130')} />
 
@@ -47,7 +53,7 @@ export function StartNode({ data, selected, isConnectable }: StartNodeProps) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const metadata: RegisterNodeMetadata<StartNodeData> = {
+export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
   type: NODE_TYPE,
   node: memo(StartNode),
   detail: {
@@ -63,6 +69,14 @@ export const metadata: RegisterNodeMetadata<StartNodeData> = {
   defaultData: {
     label: '开始',
     deletable: false,
+    inputConfig: {
+      userInputs: [],
+      refInputs: []
+    },
+    nodeConfig: {
+
+    }
   },
+  propertyPanel: UnavailableNodePropertyPanel,
   requiredVariable: []
 }

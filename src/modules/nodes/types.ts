@@ -7,11 +7,8 @@ export enum BuilderNode {
   START = 'start', // 开始节点
   END = 'end', // 结束节点
   USER_INPUT = 'user-input', // 用户输入
-  LLM_OUTPUT = 'llm-output', // 程序输出
-  SEARCH = 'search', // 检索节点
-  PROMPT = 'prompt', // 提示词节点
-  LLM = 'llm', // 大模型节点
-  TEXT_MESSAGE = 'text-message', 
+  LLM_OUTPUT = 'llm-output', // 大模型输出
+  PROMPT_SELECTOR = 'prompt-selector', // 提示词选择器
   CONDITIONAL_PATH = 'conditional-path', // 分支判断节点
 }
 
@@ -40,6 +37,52 @@ export interface RegisterNodeMetadata<T = Record<string, any>> {
   propertyPanel?: ComponentType<any>; // 面板组件
 }
 
-export interface BaseNodeData extends Record<string, any> {
+export interface BaseNodeData<T> extends Record<string, any> {
   deletable?: boolean;
+  inputConfig: {
+    userInputs: NodeIOData[],
+    refInputs: NodeParamRefData[]
+  },
+  nodeConfig: T
+}
+
+export interface NodeIOData {
+  id?: string;
+  type: number;
+  name: string;
+  label: string;
+  required: boolean;
+}
+
+export interface NodeParamRefData {
+  nodeId: string;
+  nodeParamName: string;
+  name: string;
+}
+
+
+export const InputTypeOptions = [
+  {
+    label: "文本",
+    icon: 'i-mynaui:type-text',
+    value: 1
+  },
+  {
+    label: '数字',
+    icon: 'i-mynaui:math',
+    value: 2
+  },
+  {
+    label: '复选框',
+    icon: 'i-mynaui:check-square',
+    value: 3
+  }
+]
+
+export const GetInputType = (value: number) => {
+  return InputTypeOptions.find(item => item.value === value) || {
+    label: '未知类型',
+    icon: 'i-mynaui:dot',
+    value: 0
+  }
 }

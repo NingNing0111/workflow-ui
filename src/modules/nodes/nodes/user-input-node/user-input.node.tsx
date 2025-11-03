@@ -1,14 +1,13 @@
 import type { Node, NodeProps } from '@xyflow/react'
 import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
-import { Position, useReactFlow } from '@xyflow/react'
-import { produce } from 'immer'
+import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
 import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
-import { BuilderNode } from '~/modules/nodes/types'
+import { BuilderNode, GetInputType } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
@@ -16,35 +15,18 @@ import UserInputNodePropertyPanel from '~/modules/sidebar/panels/node-properties
 
 const NODE_TYPE = BuilderNode.USER_INPUT
 
-export interface UserInputNodeData extends BaseNodeData {
-    label: string              // 输入字段的名称
-    variableName: string       // 对应变量名
-    defaultValue: string       // 默认值
-    inputType: 'text' | 'number' | 'boolean'
+export interface UserInputNodeData {
 }
 
-type UserInputNodeProps = NodeProps<Node<UserInputNodeData, typeof NODE_TYPE>>
+type UserInputNodeProps = NodeProps<Node<BaseNodeData<UserInputNodeData>, typeof NODE_TYPE>>
 
 export function UserInputNode({ id, isConnectable, selected, data }: UserInputNodeProps) {
     const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
-    const { setNodes } = useReactFlow()
     const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
     const [targetHandleId] = useState<string>(nanoid())
     const [sourceHandleId] = useState<string>(nanoid())
 
     const deleteNode = useDeleteNode()
-
-    // 节点内直接修改输入框的值
-    const updateNodeField = useCallback((field: keyof UserInputNodeData, value: any) => {
-        setNodes(nodes =>
-            produce(nodes, draft => {
-                const node = draft.find(n => n.id === id)
-                if (node) {
-                    node.data[field] = value
-                }
-            })
-        )
-    }, [id, setNodes])
 
     const showNodeProperties = useCallback(() => {
         showNodePropertiesOf({ id, type: NODE_TYPE })
@@ -61,7 +43,6 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                     <div className="absolute inset-0">
                         <div className="absolute h-full w-3/5 from-teal-900/20 to-transparent bg-gradient-to-r" />
                     </div>
-
                     <div className="relative h-9 flex items-center justify-between gap-x-4 px-0.5 py-0.5">
                         <div className="flex grow items-center pl-0.5">
                             <div className="size-7 flex items-center justify-center">
@@ -98,32 +79,30 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                     </div>
                 </div>
 
-                <div className="p-3 text-xs space-y-2">
-                    <div className="flex flex-col gap-1">
-                        <label className="text-dark-50 text-[11px] uppercase">变量名</label>
-                        <input
-                        disabled
-                            type="text"
-                            onChange={e => updateNodeField('variableName', e.target.value)}
-                            value={data.variableName ?? ''}
-                            placeholder="user_input"
-                            className="w-full px-2 py-1 rounded bg-dark-400/50 border border-dark-200 outline-none text-white"
-                        />
-                    </div>
+                {/* 遍历userInputs进行展示 */}
+                {data.inputConfig.userInputs.map((input, index) => (
+                    <div
+                        key={index}
+                        className="flex items-center justify-between text-xs text-light-900/70 bg-dark-300/40 rounded-md px-2 py-1"
+                    >
+                        <div className="flex items-center gap-x-2 truncate">
+                            {/* 图标，根据类型选择 */}
+                            <div className="size-4 flex items-center justify-center text-light-900/50">
+                                <div className={`${GetInputType(input.type).icon} size-3.5`}></div>
+                            </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-dark-50 text-[11px] uppercase">默认值</label>
-                        <input
-                        disabled
-                            type="text"
-                            onChange={e => updateNodeField('defaultValue', e.target.value)}
-                            value={data.defaultValue ?? ''}
-                            placeholder="例如：你好"
-                            className="w-full px-2 py-1 rounded bg-dark-400/50 border border-dark-200 outline-none text-white"
-                        />
-                    </div>
+                            {/* 名称展示 */}
+                            <div className="flex items-center gap-x-1 truncate">
+                                <span className="font-medium text-light-900/70">{input.name || '变量'}</span>
+                            </div>
+                        </div>
 
-                </div>
+                        {input.required && (
+                            <span className="text-teal-500 text-[10px] font-medium">必填</span>
+                        )}
+                    </div>
+                ))}
+
                 <div className="bg-dark-300/30 px-4 py-2 text-xs text-light-900/50">
                     Node:
                     {' '}
@@ -136,7 +115,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
 
             <CustomHandle
                 type="target"
-                id={sourceHandleId}
+                id={targetHandleId}
                 position={Position.Left}
                 isConnectable={isConnectable}
             />
@@ -152,7 +131,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const metadata: RegisterNodeMetadata<UserInputNodeData> = {
+export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
     type: NODE_TYPE,
     node: memo(UserInputNode),
     detail: {
@@ -164,11 +143,30 @@ export const metadata: RegisterNodeMetadata<UserInputNodeData> = {
         inputs: 1,
         outputs: 1,
     },
+
     defaultData: {
-        label: '变量名',
-        variableName: 'user_input',
-        defaultValue: '',
-        inputType: 'text'
+        inputConfig: {
+            // 节点输入信息
+            userInputs: [
+                {
+                    type: 1,
+                    name: "user_input",
+                    label: "用户输入",
+                    required: true
+                },
+                {
+                    type: 2,
+                    name: 'user_id',
+                    label: '用户ID',
+                    required: true
+                }
+            ],
+            // 可引用其它节点的变量信息
+            refInputs: []
+        },
+        nodeConfig: {
+        }
+
     },
     propertyPanel: UserInputNodePropertyPanel,
     requiredVariable: []

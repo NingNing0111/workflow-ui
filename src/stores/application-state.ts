@@ -12,7 +12,7 @@ interface State {
     blurred: boolean;
   };
   sidebar: {
-    active: 'node-properties' | 'available-nodes' | 'none';
+    active: 'node-properties' | 'available-nodes' | 'exist-nodes' | 'none';
     panels: {
       nodeProperties: {
         selectedNode: { id: string; type: BuilderNodeType } | null | undefined;
@@ -31,7 +31,7 @@ interface Actions {
       setBlur: (blur: boolean) => void;
     };
     sidebar: {
-      setActivePanel: (panel: 'node-properties' | 'available-nodes' | 'none') => void;
+      setActivePanel: (panel: 'node-properties' | 'available-nodes' | 'exist-nodes' | 'none') => void;
       showNodePropertiesOf: (node: { id: string; type: BuilderNodeType }) => void;
       panels: {
         nodeProperties: {

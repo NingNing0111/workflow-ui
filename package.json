@@ -12,6 +12,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@iconify-json/mynaui": "^1.2.16",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@vercel/analytics": "^1.5.0",
     "chatbot-flow-builder-starter-kit": "link:",
     "react": "^18.3.1",

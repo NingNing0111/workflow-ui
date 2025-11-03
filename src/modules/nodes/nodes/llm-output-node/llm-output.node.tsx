@@ -2,7 +2,6 @@ import type { Node, NodeProps } from '@xyflow/react'
 import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
 import { Position, useReactFlow } from '@xyflow/react'
 import { nanoid } from 'nanoid'
-import { produce } from 'immer'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
@@ -11,20 +10,20 @@ import { BuilderNode } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 import { useApplicationState } from '~/stores/application-state'
 import LLMNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/llm-property-panel'
-import { TargetPrompt } from '~/modules/nodes/nodes/llm-node/components/target-prompt'
-import { useAddNodeOnEdgeDrop } from '~/modules/flow-builder/hooks/use-add-node-on-edge-drop'
+import { TargetPrompt } from '~/modules/nodes/nodes/llm-output-node/components/target-prompt'
 
-const NODE_TYPE = BuilderNode.LLM
+const NODE_TYPE = BuilderNode.LLM_OUTPUT
 
-export interface LLMNodeData extends BaseNodeData {
+export interface LLMNodeData {
   modelName: string
   contextLength: number
   enableThinking: boolean
   systemMessage?: string
   userMessage: string
+  stream: boolean
 }
 
-type LLMNodeProps = NodeProps<Node<LLMNodeData, typeof NODE_TYPE>>
+type LLMNodeProps = NodeProps<Node<BaseNodeData<LLMNodeData>, typeof NODE_TYPE>>
 
 export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
@@ -155,12 +154,12 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const metadata: RegisterNodeMetadata<LLMNodeData> = {
+export const metadata: RegisterNodeMetadata<BaseNodeData<LLMNodeData>> = {
   type: NODE_TYPE,
   node: memo(LLMNode),
   detail: {
     icon: 'i-mynaui:chat',
-    title: '大模型',
+    title: '大模型输出',
     description: '调用大模型时的参数配置',
   },
   connection: {
@@ -168,10 +167,19 @@ export const metadata: RegisterNodeMetadata<LLMNodeData> = {
     outputs: 1,
   },
   defaultData: {
-    modelName: 'qwen-plus',
-    contextLength: 10,
-    userMessage: 'default',
-    enableThinking: true,
+    label: '大模型输出',
+    inputConfig: {
+      userInputs: [],
+      refInputs: []
+    },
+    nodeConfig: {
+      modelName: 'qwen-plus',
+      contextLength: 10,
+      userMessage: 'default',
+      enableThinking: true,
+      stream: true
+    }
+
   },
   propertyPanel: LLMNodePropertyPanel,
   requiredVariable: [],
