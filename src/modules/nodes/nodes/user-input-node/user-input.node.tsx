@@ -175,7 +175,20 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
         },
         nodeConfig: {
         },
-        nodeOutput: []
+        nodeOutput: [
+            {
+                type: 1,
+                name: "userInput",
+                label: "用户输入",
+                required: true
+            },
+            {
+                type: 2,
+                name: 'userId',
+                label: '用户ID',
+                required: true
+            }
+        ]
 
     },
     propertyPanel: UnavailableNodePropertyPanel,

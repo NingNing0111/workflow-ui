@@ -1,3 +1,4 @@
+import { Button } from '@radix-ui/themes'
 import { useNodes, useReactFlow } from '@xyflow/react'
 import { produce } from 'immer'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
@@ -68,8 +69,11 @@ export function NodePropertiesPanel() {
           </div>
         </Pane>
 
+
         
       </SplitPane>
+
+
 
     </SidebarPanelWrapper>
   )

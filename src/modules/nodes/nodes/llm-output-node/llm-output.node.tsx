@@ -6,7 +6,7 @@ import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
-import { BuilderNode } from '~/modules/nodes/types'
+import { BuilderNode, InputTypeEnum } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 import { useApplicationState } from '~/stores/application-state'
 import { TargetPrompt } from '~/modules/nodes/nodes/llm-output-node/components/target-prompt'
@@ -29,8 +29,7 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
   const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
   const [sourceHandleId] = useState<string>(nanoid())
-  const [systemHandleId] = useState<string>(nanoid())
-  const [userHandleId] = useState<string>(nanoid())
+  const [targetHandleId] = useState<string>(nanoid())
   const deleteNode = useDeleteNode()
 
 
@@ -136,15 +135,24 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
               {data.nodeConfig.stream ? '流式' : '非流式'}
             </div>
           </div>
-          {/* 用户输入示例 */}
-          {data.nodeConfig.userMessage && <TargetPrompt id={userHandleId} type='用户提示词' code={data.nodeConfig.userMessage}
-            isConnectable={isConnectable}
-          />}
 
-          {/* 系统提示 */}
-          {data.nodeConfig.systemMessage && <TargetPrompt id={systemHandleId} type='系统提示词' code={data.nodeConfig.systemMessage}
-            isConnectable={isConnectable}
-          />}
+          <div className="relative h-10 flex items-center gap-x-2 px-4 -mx-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-dark-50 text-[11px] uppercase">用户提示词</label>
+              <div className="bg-dark-100/50 border border-dark-200 rounded-md px-2 py-1 text-light-900 text-[11px] leading-snug line-clamp-2 select-text">
+                {data.nodeConfig.userMessage}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative h-10 flex items-center gap-x-2 px-4 -mx-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-dark-50 text-[11px] uppercase">系统提示词</label>
+              <div className="bg-dark-100/50 border border-dark-200 rounded-md px-2 py-1 text-light-900 text-[11px] leading-snug line-clamp-2 select-text">
+                {data.nodeConfig.systemMessage}
+              </div>
+            </div>
+          </div>
 
 
 
@@ -156,7 +164,12 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
         </div>
 
       </div>
-
+      <CustomHandle
+        type="target"
+        id={targetHandleId}
+        position={Position.Left}
+        isConnectable={isConnectable}
+      />
       <CustomHandle
         type="source"
         id={sourceHandleId}
@@ -194,7 +207,14 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<LLMOutputNodeData>> = {
       enableThinking: true,
       stream: true
     },
-    nodeOutput: []
+    nodeOutput: [
+      {
+        name: 'content',
+        required: true,
+        label: '回复内容',
+        type: InputTypeEnum.TEXT
+      }
+    ]
 
   },
   propertyPanel: LLMOutputNodePropertyPanel,

@@ -18,20 +18,6 @@ type LLMOutputNodePropertyPanelProps = Readonly<{
 export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLMOutputNodePropertyPanelProps) {
     const [llmOutputConfig, setLLMOutputConfig] = useState<LLMOutputNodeData>(data.nodeConfig);
     const variableData: any = useNodePathPreOutputData(id);
-    useEffect(() => {
-        updateData({
-            nodeOutput: [
-                {
-                    id,
-                    name: 'content',
-                    required: true,
-                    label: '回复内容',
-                    type: InputTypeEnum.TEXT
-                }
-            ]
-        })
-    }, [id])
-
 
     return (
         <div className="flex flex-col gap-5 p-5">

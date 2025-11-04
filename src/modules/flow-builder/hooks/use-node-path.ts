@@ -1,85 +1,103 @@
-import { useReactFlow } from "@xyflow/react"
+import { useReactFlow, useStore } from "@xyflow/react"
 import { useMemo } from "react"
 import { BuilderNode } from "~/modules/nodes/types"
 import { getNodeDetail } from "~/modules/nodes/utils"
 
 
-const getPathAllData = (targetNodeId: string) => {
-    const { getNodes, getEdges } = useReactFlow()
-    const pathData = useMemo(() => {
+/**
+ * 获取从开始节点到目标节点的所有路径（每条路径包含所有节点data）
+ * @param targetNodeId 目标节点ID
+ * @returns Array<Array<NodeData>> 多条路径，每条路径是节点数据数组
+ */
+export const useAllPathsToNode = (targetNodeId: string) => {
+    const nodes = useStore((state) => state.nodes);
+    const edges = useStore((state) => state.edges);
 
-        const nodes = getNodes();
-        const edges = getEdges();
+    const allPaths = useMemo(() => {
+        if (!nodes.length || !targetNodeId) return [];
 
-        if (!nodes.length || !targetNodeId) return []
+        // 找到开始节点
+        const startNode = nodes.find((n) => n.type === "start");
+        if (!startNode) return [];
 
-        // 找开始节点
-        const startNode = nodes.find(n => n.type === 'start');
-        if (!startNode) return []
+        const resultPaths: any[] = [];
 
-        // 结果数组
-        let result: any[] = []
-        let found = false;
-        // 记录存放已访问过的节点
-        const visited = new Set<string>();
+        // 队列保存 [当前节点ID, 路径数组]
+        const queue: [string, any[]][] = [[startNode.id, []]];
 
-        // DFS
-        const dfs = (currentNodeId: string, currentPath: any[]) => {
-            if (found) return;
-            // 设置当前节点 已访问过
-            visited.add(currentNodeId);
-            const node = nodes.find(n => n.id === currentNodeId);
-            if (!node) return;
-            const newPath = [...currentPath, { ...node.data, id: currentNodeId, title: getNodeDetail(node.type).title, type: node.type }];
+        while (queue.length > 0) {
+            const [currentNodeId, currentPath] = queue.shift()!;
+            const currentNode = nodes.find((n) => n.id === currentNodeId);
+            if (!currentNode) continue;
 
-            // 如果当前节点就是目标节点 则退出
-            if (currentNodeId == targetNodeId) {
-                result = newPath;
-                found = true;
-                return;
+            // 当前路径 + 当前节点
+            const newPath = [
+                ...currentPath,
+                {
+                    ...currentNode.data,
+                    id: currentNode.id,
+                    type: currentNode.type,
+                    title: getNodeDetail(currentNode.type).title,
+                },
+            ];
+
+            // ✅ 如果找到目标节点
+            if (currentNodeId === targetNodeId) {
+                resultPaths.push(newPath);
+                continue;
             }
 
+            // 获取从当前节点出发的所有边
+            const outgoingEdges = edges.filter((e) => e.source === currentNodeId);
 
-            // 遍历下一个可访问节点
-            const nextEdges = edges.filter(e => e.source === currentNodeId)
-            for (const edge of nextEdges) {
-                if (!visited.has(edge.target)) {
-                    dfs(edge.target, newPath)
+            for (const edge of outgoingEdges) {
+                // 防止路径中出现环
+                if (!newPath.find((n) => n.id === edge.target)) {
+                    queue.push([edge.target, newPath]);
                 }
             }
         }
 
-        dfs(startNode.id, [])
-        return result;
+        return resultPaths;
+    }, [nodes, edges, targetNodeId]);
 
-    }, [targetNodeId, getEdges, getNodes])
+    return allPaths;
+};
 
-    return pathData;
-}
+
 /**
  * 获取从开始节点 到 目标节点的所有数据
  * @param targetNodeId 节点ID
  */
 export const useNodePathPreOutputData = (targetNodeId: string) => {
 
-    const pathAllData = getPathAllData(targetNodeId);
+    const pathAllData = useAllPathsToNode(targetNodeId);
+    const mergedPathData = useMemo(() => {
+        if (!pathAllData.length) return [];
 
-    const validNodes = pathAllData.filter(
-        (item) => item.id !== targetNodeId
+        // 展平所有路径并按节点id去重
+        const uniqueMap = new Map<string, any>();
+
+        pathAllData.flat().forEach((node) => {
+            uniqueMap.set(node.id, node);
+        });
+
+        return Array.from(uniqueMap.values());
+    }, [pathAllData]);
+    // 将所有路径数据合并 并根据id 去重
+
+    const validNodes = mergedPathData.filter(
+        (item: any) => item.id !== targetNodeId
     );
     let result: any = [];
     for (const node of validNodes) {
-        var newResult = []
-        if (node.type === BuilderNode.USER_INPUT) {
-            newResult = node.inputConfig.userInputs.map((item: any) => {
-                return {
-                    ...item,
-                    id: node.id
-                }
-            })
-        } else {
-            newResult = node.nodeOutput
-        }
+        var newResult = node.nodeOutput.map((item: any) => {
+            return {
+                ...item,
+                id: node.id
+            }
+        })
+
         result = [...result, ...newResult]
     }
     const groupedData = Object.values(
@@ -97,6 +115,5 @@ export const useNodePathPreOutputData = (targetNodeId: string) => {
             return acc
         }, {})
     )
-    
     return groupedData
 }

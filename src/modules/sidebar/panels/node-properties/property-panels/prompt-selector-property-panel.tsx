@@ -65,20 +65,6 @@ export default function PromptSelectorNodePropertyPanel({ id, data, updateData }
     const selectedOption = promptOptions.find(opt => opt.value === data.nodeConfig.promptCode)
     const [promptMessage, setPromptMessage] = useState('');
     const variableData: any = useNodePathPreOutputData(id);
-    // 设置输出变量
-    useEffect(() => {
-        updateData({
-            nodeOutput: [
-                {
-                    id,
-                    type: InputTypeEnum.TEXT,
-                    name: 'promptMessage',
-                    label: '提示词文本',
-                    required: true
-                }
-            ]
-        })
-    }, [id])
 
     useEffect(() => {
         handlePromptMessageChange(selectedOption?.content ?? "")

@@ -7,7 +7,7 @@ import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
-import { BuilderNode } from '~/modules/nodes/types'
+import { BuilderNode, InputTypeEnum } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
@@ -177,7 +177,12 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<PromptSelectorNodeData>
             promptType: 'user'
         },
         nodeOutput: [
-            
+            {
+                name: 'promptMessage',
+                type: InputTypeEnum.TEXT,
+                required: true,
+                label: "提示词内容"
+            }
         ]
     },
     propertyPanel: PromptSelectorNodePropertyPanel,

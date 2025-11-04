@@ -49,10 +49,6 @@ const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps)
         [id]
     );
 
-    useEffect(() => {
-        setInputConfig(nodeData.inputConfig);
-    }, [data]);
-
     // ===== 用户输入变量操作 =====
     const handleAddVariable = () => {
         const newVar: NodeIOData = {
