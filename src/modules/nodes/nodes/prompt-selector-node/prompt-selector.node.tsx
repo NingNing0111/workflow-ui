@@ -12,7 +12,7 @@ import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
 import { toast } from 'sonner'
-import PromptNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/prompt-property-panel'
+import PromptSelectorNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/prompt-selector-property-panel'
 
 const NODE_TYPE = BuilderNode.PROMPT_SELECTOR
 
@@ -45,12 +45,12 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptSelec
         <>
             <div
                 data-selected={selected}
-                className=" overflow-clip border border-dark-200 rounded-xl bg-dark-300/50 shadow-sm backdrop-blur-xl transition divide-y divide-dark-200 data-[selected=true]:(border-teal-600 ring-1 ring-teal-600/50)"
+                className="w-xs border border-dark-200 rounded-xl bg-dark-300/50 shadow-sm backdrop-blur-xl transition divide-y divide-dark-200 data-[selected=true]:(border-purple-600 ring-1 ring-purple-600/50)"
                 onDoubleClick={showNodeProperties}
             >
                 <div className="relative bg-dark-300/50">
                     <div className="absolute inset-0">
-                        <div className="absolute h-full w-3/5 from-teal-900/20 to-transparent bg-gradient-to-r" />
+                        <div className="absolute h-full w-3/5 from-purple-800/20 to-transparent bg-gradient-to-r" />
                     </div>
 
                     <div className="relative h-9 flex items-center justify-between gap-x-4 px-0.5 py-0.5">
@@ -78,6 +78,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptSelec
                                 <div className="i-mynaui:eye size-4 text-light-900/70" />
                             </button>
                             <button
+                                title='编辑'
                                 type="button"
                                 className="size-7 flex items-center justify-center border border-transparent rounded-lg bg-transparent outline-none transition active:(border-dark-200 bg-dark-400/50) hover:(bg-dark-100)"
                                 onClick={() => showNodeProperties()}
@@ -85,6 +86,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptSelec
                                 <div className="i-mynaui:cog size-4" />
                             </button>
                             <button
+                                title='删除'
                                 type="button"
                                 className="size-7 flex items-center justify-center border border-transparent rounded-lg bg-transparent text-red-400 outline-none transition active:(border-dark-200 bg-dark-400/50) hover:(bg-dark-100)"
                                 onClick={() => deleteNode(id)}
@@ -134,12 +136,12 @@ export function UserInputNode({ id, isConnectable, selected, data }: PromptSelec
                 </div>
             </div>
 
-            {data.promptType === 'user' && <CustomHandle
+            <CustomHandle
                 type="target"
                 id={targetHandleId}
                 position={Position.Left}
                 isConnectable={isConnectable}
-            />}
+            />
 
             <CustomHandle
                 type="source"
@@ -173,8 +175,11 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<PromptSelectorNodeData>
         nodeConfig: {
             promptCode: 'default',
             promptType: 'user'
-        }
+        },
+        nodeOutput: [
+            
+        ]
     },
-    propertyPanel: PromptNodePropertyPanel,
+    propertyPanel: PromptSelectorNodePropertyPanel,
     requiredVariable: []
 }

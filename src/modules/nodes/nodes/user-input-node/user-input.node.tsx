@@ -3,7 +3,7 @@ import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
 import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
-import { memo, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
@@ -11,7 +11,7 @@ import { BuilderNode, GetInputType } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
-import UserInputNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/user-input-property-panel'
+import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
 
 const NODE_TYPE = BuilderNode.USER_INPUT
 
@@ -27,21 +27,21 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
     const [sourceHandleId] = useState<string>(nanoid())
 
     const deleteNode = useDeleteNode()
-
     const showNodeProperties = useCallback(() => {
         showNodePropertiesOf({ id, type: NODE_TYPE })
     }, [id, showNodePropertiesOf])
+
 
     return (
         <>
             <div
                 data-selected={selected}
-                className=" overflow-clip border border-dark-200 rounded-xl bg-dark-300/50 shadow-sm backdrop-blur-xl transition divide-y divide-dark-200 data-[selected=true]:(border-teal-600 ring-1 ring-teal-600/50)"
+                className="w-xs border border-dark-200 rounded-xl bg-dark-300/50 shadow-sm backdrop-blur-xl transition divide-y divide-dark-200 data-[selected=true]:(border-purple-600 ring-1 ring-purple-600/50)"
                 onDoubleClick={showNodeProperties}
             >
                 <div className="relative bg-dark-300/50">
                     <div className="absolute inset-0">
-                        <div className="absolute h-full w-3/5 from-teal-900/20 to-transparent bg-gradient-to-r" />
+                        <div className="absolute h-full w-3/5 from-purple-800/20 to-transparent bg-gradient-to-r" />
                     </div>
                     <div className="relative h-9 flex items-center justify-between gap-x-4 px-0.5 py-0.5">
                         <div className="flex grow items-center pl-0.5">
@@ -59,8 +59,16 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                         </div>
 
                         <div className="flex shrink-0 items-center gap-x-0.5 pr-0.5">
-
                             <button
+                                title="查看节点"
+                                type="button"
+                                className="size-7 flex items-center justify-center rounded-lg transition hover:bg-dark-100 active:bg-dark-400/50"
+                                onClick={showNodeProperties}
+                            >
+                                <div className="i-mynaui:eye size-4 text-light-900/70" />
+                            </button>
+                            <button
+                                title='编辑'
                                 type="button"
                                 className="size-7 flex items-center justify-center border border-transparent rounded-lg bg-transparent outline-none transition active:(border-dark-200 bg-dark-400/50) hover:(bg-dark-100)"
                                 onClick={() => showNodeProperties()}
@@ -69,6 +77,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                             </button>
 
                             <button
+                                title='删除'
                                 type="button"
                                 className="size-7 flex items-center justify-center border border-transparent rounded-lg bg-transparent text-red-400 outline-none transition active:(border-dark-200 bg-dark-400/50) hover:(bg-dark-100)"
                                 onClick={() => deleteNode(id)}
@@ -80,17 +89,17 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                 </div>
 
                 {/* 遍历userInputs进行展示 */}
-                {data.inputConfig.userInputs.map((input, index) => (
+                {data.inputConfig && data.inputConfig.userInputs.map((input, index) => (
                     <div
                         key={index}
                         className="flex items-center justify-between text-xs text-light-900/70 bg-dark-300/40 rounded-md px-2 py-1"
                     >
                         <div className="flex items-center gap-x-2 truncate">
+
                             {/* 图标，根据类型选择 */}
                             <div className="size-4 flex items-center justify-center text-light-900/50">
-                                <div className={`${GetInputType(input.type).icon} size-3.5`}></div>
+                                <div className={`${GetInputType(input.type).icon} text-2xl text-blue-500`}></div>
                             </div>
-
                             {/* 名称展示 */}
                             <div className="flex items-center gap-x-1 truncate">
                                 <span className="font-medium text-light-900/70">{input.name || '变量'}</span>
@@ -150,13 +159,13 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
             userInputs: [
                 {
                     type: 1,
-                    name: "user_input",
+                    name: "userInput",
                     label: "用户输入",
                     required: true
                 },
                 {
                     type: 2,
-                    name: 'user_id',
+                    name: 'userId',
                     label: '用户ID',
                     required: true
                 }
@@ -165,9 +174,10 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
             refInputs: []
         },
         nodeConfig: {
-        }
+        },
+        nodeOutput: []
 
     },
-    propertyPanel: UserInputNodePropertyPanel,
+    propertyPanel: UnavailableNodePropertyPanel,
     requiredVariable: []
 }

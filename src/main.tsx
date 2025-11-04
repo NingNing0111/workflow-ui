@@ -12,7 +12,7 @@ import { ApplicationStateProvider } from '~/stores/application-state'
 
 import 'virtual:uno.css'
 import '~/assets/styles/global.scss'
-
+import "@radix-ui/themes/styles.css";
 ReactGA.initialize('G-CJM5ZGWSKN')
 
 OverlayScrollbars.plugin(ClickScrollPlugin)

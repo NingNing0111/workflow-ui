@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 
-export const DEFAULT_START_ID = "__START__";
-export const DEFAULT_END_ID = "__END__";
+export const DEFAULT_START_ID = "START";
+export const DEFAULT_END_ID = "END";
 
 export enum BuilderNode {
   START = 'start', // 开始节点
@@ -40,10 +40,11 @@ export interface RegisterNodeMetadata<T = Record<string, any>> {
 export interface BaseNodeData<T> extends Record<string, any> {
   deletable?: boolean;
   inputConfig: {
-    userInputs: NodeIOData[],
-    refInputs: NodeParamRefData[]
+    userInputs: NodeIOData[], // 节点输入变量
+    refInputs: NodeParamRefData[] // 节点引用变量
   },
-  nodeConfig: T
+  nodeConfig: T, // 节点配置
+  nodeOutput: NodeIOData[] // 节点输出数据
 }
 
 export interface NodeIOData {
@@ -78,6 +79,14 @@ export const InputTypeOptions = [
     value: 3
   }
 ]
+
+export const InputTypeEnum = {
+  TEXT: 1,
+  NUMBER: 2,
+  BOOLEAN: 3
+}
+
+export type InputType = "text" | "number" | "boolean" | "none"
 
 export const GetInputType = (value: number) => {
   return InputTypeOptions.find(item => item.value === value) || {

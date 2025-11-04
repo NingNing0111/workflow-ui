@@ -9,21 +9,21 @@ import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
 import { BuilderNode } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 import { useApplicationState } from '~/stores/application-state'
-import LLMNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/llm-property-panel'
 import { TargetPrompt } from '~/modules/nodes/nodes/llm-output-node/components/target-prompt'
+import LLMOutputNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/llm-output-panel'
 
 const NODE_TYPE = BuilderNode.LLM_OUTPUT
 
-export interface LLMNodeData {
+export interface LLMOutputNodeData {
   modelName: string
   contextLength: number
   enableThinking: boolean
-  systemMessage?: string
+  systemMessage: string
   userMessage: string
   stream: boolean
 }
 
-type LLMNodeProps = NodeProps<Node<BaseNodeData<LLMNodeData>, typeof NODE_TYPE>>
+type LLMNodeProps = NodeProps<Node<BaseNodeData<LLMOutputNodeData>, typeof NODE_TYPE>>
 
 export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
@@ -43,12 +43,13 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
       <div
         data-selected={selected}
         className="w-xs border border-dark-200 rounded-xl bg-dark-300/50 shadow-sm backdrop-blur-xl transition divide-y divide-dark-200 data-[selected=true]:(border-purple-600 ring-1 ring-purple-600/50)"
+
         onDoubleClick={showNodeProperties}
       >
         {/* 顶部标题栏 */}
         <div className="relative bg-dark-300/50">
           <div className="absolute inset-0">
-            <div className="absolute h-full w-3/5 from-teal-900/20 to-transparent bg-gradient-to-r" />
+            <div className="absolute h-full w-3/5 from-purple-800/20 to-transparent bg-gradient-to-r" />
           </div>
 
           <div className="relative h-9 flex items-center justify-between gap-x-4 px-1 py-0.5">
@@ -97,7 +98,7 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
             <label className="text-dark-50 text-[11px] uppercase">模型名称</label>
             <div className="flex items-center gap-1">
               <div className="flex-1 truncate bg-dark-100/50 border border-dark-200 rounded-md px-2 py-1 text-light-900 text-xs select-text">
-                {data.modelName}
+                {data.nodeConfig.modelName}
               </div>
             </div>
           </div>
@@ -106,7 +107,7 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
           <div className="flex flex-col gap-1">
             <label className="text-dark-50 text-[11px] uppercase">上下文长度</label>
             <div className="inline-flex items-center justify-center rounded-md px-2 py-1 text-[11px] font-medium w-fit bg-dark-100/50 border border-dark-200 text-light-900/90">
-              {data.contextLength}
+              {data.nodeConfig.contextLength}
             </div>
           </div>
 
@@ -116,19 +117,32 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
             <div
               className={cn(
                 'inline-flex items-center justify-center rounded-md px-2 py-1 text-[11px] font-medium w-fit',
-                data.enableThinking ? 'bg-teal-900/30 text-teal-300' : 'bg-dark-100/50 text-light-900/50'
+                data.nodeConfig.enableThinking ? 'bg-teal-900/30 text-teal-300' : 'bg-dark-100/50 text-light-900/50'
               )}
             >
-              {data.enableThinking ? '已启用' : '未启用'}
+              {data.nodeConfig.enableThinking ? '已启用' : '未启用'}
+            </div>
+          </div>
+
+          {/* 流式输出 */}
+          <div className="flex flex-col gap-1">
+            <label className="text-dark-50 text-[11px] uppercase">输出模式</label>
+            <div
+              className={cn(
+                'inline-flex items-center justify-center rounded-md px-2 py-1 text-[11px] font-medium w-fit',
+                data.nodeConfig.stream ? 'bg-teal-900/30 text-teal-300' : 'bg-dark-100/50 text-light-900/50'
+              )}
+            >
+              {data.nodeConfig.stream ? '流式' : '非流式'}
             </div>
           </div>
           {/* 用户输入示例 */}
-          {data.userMessage && <TargetPrompt id={userHandleId} type='用户提示词' code={data.userMessage}
+          {data.nodeConfig.userMessage && <TargetPrompt id={userHandleId} type='用户提示词' code={data.nodeConfig.userMessage}
             isConnectable={isConnectable}
           />}
 
           {/* 系统提示 */}
-          {data.systemMessage && <TargetPrompt id={systemHandleId} type='系统提示词' code={data.systemMessage}
+          {data.nodeConfig.systemMessage && <TargetPrompt id={systemHandleId} type='系统提示词' code={data.nodeConfig.systemMessage}
             isConnectable={isConnectable}
           />}
 
@@ -154,7 +168,7 @@ export function LLMNode({ id, isConnectable, selected, data, }: LLMNodeProps) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const metadata: RegisterNodeMetadata<BaseNodeData<LLMNodeData>> = {
+export const metadata: RegisterNodeMetadata<BaseNodeData<LLMOutputNodeData>> = {
   type: NODE_TYPE,
   node: memo(LLMNode),
   detail: {
@@ -175,12 +189,14 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<LLMNodeData>> = {
     nodeConfig: {
       modelName: 'qwen-plus',
       contextLength: 10,
-      userMessage: 'default',
+      userMessage: '你好！',
+      systemMessage: "You're a helpful assistant!",
       enableThinking: true,
       stream: true
-    }
+    },
+    nodeOutput: []
 
   },
-  propertyPanel: LLMNodePropertyPanel,
+  propertyPanel: LLMOutputNodePropertyPanel,
   requiredVariable: [],
 }

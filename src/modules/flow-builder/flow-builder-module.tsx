@@ -55,26 +55,6 @@ export function FlowBuilderModule() {
       const sourceNode = getNode(source);
       const targetNode = getNode(target);
 
-      console.log("SourceNode:", sourceNode);
-      console.log("TargetNode:", targetNode);
-
-      // 如果源节点是Prompt节点，目标是 LLM 节点 则需要更新LLM的数据
-      if (sourceNode?.type === 'prompt' && targetNode?.type === 'llm') {
-        // 
-        setNodes(nodes => produce(nodes, draft => {
-          const node = draft.find(n => n.id === target)
-          if (node) {
-            if (sourceNode.data.promptType === 'user') {
-              node.data.userMessage = sourceNode.data.promptCode
-
-            } else {
-              node.data.systemMessage = sourceNode.data.promptCode
-            }
-          }
-
-        }))
-
-      }
     },
     [setEdges, setNodes],
   )

@@ -1,15 +1,19 @@
-import type { BuilderNodeType } from '~/modules/nodes/types'
+import { InputTypeEnum, type BaseNodeData, type BuilderNodeType, type NodeParamRefData } from '~/modules/nodes/types'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import { cn } from '~@/utils/cn'
+import type { PromptSelectorNodeData } from '~/modules/nodes/nodes/prompt-selector-node/prompt-selector.node';
+import { useEffect, useState } from 'react';
+import VariableInput from '~/modules/sidebar/panels/node-properties/components/variable-input';
+import { TextArea } from '@radix-ui/themes';
+import { useNodePathPreOutputData } from '~/modules/flow-builder/hooks/use-node-path';
 
-import type { PromptNodeData } from '~/modules/nodes/nodes/prompt-node/prompt.node'
 
 type PromptNodePropertyPanelProps = Readonly<{
     id: string;
     type: BuilderNodeType;
-    data: PromptNodeData;
-    updateData: (data: Partial<PromptNodeData>) => void;
+    data: BaseNodeData<PromptSelectorNodeData>;
+    updateData: (data: Partial<BaseNodeData<PromptSelectorNodeData>>) => void;
 }>
 
 const promptOptions = [
@@ -17,42 +21,72 @@ const promptOptions = [
         label: '默认',
         value: 'default',
         icon: 'mdi:text-box-check',
-        type: 'user'
+        type: 'user',
+        content: "默认提示词内容"
     },
-    { 
-        label: '总结用户输入', 
+    {
+        label: '总结用户输入',
         value: 'summary_user_input',
         icon: 'mdi:text-box-check',
-        type: 'user'
+        type: 'user',
+        content: "总结用户输入提示词内容"
     },
-    { 
-        label: '生成回复内容', 
+    {
+        label: '生成回复内容',
         value: 'generate_reply',
         icon: 'mdi:message-reply-text',
-        type: 'user'
+        type: 'user',
+        content: "生成回复内容提示词"
     },
-    { 
-        label: '意图识别', 
+    {
+        label: '意图识别',
         value: 'detect_intent',
         icon: 'mdi:brain',
-        type: 'user'
+        type: 'user',
+        content: "意图识别内容提示词"
     },
-    { 
-        label: '提取关键词', 
+    {
+        label: '提取关键词',
         value: 'extract_keywords',
         icon: 'mdi:key',
-        type: 'user'
+        type: 'user',
+        content: "提取关键词提示词内容"
     },
-        { 
-        label: 'AI销售角色', 
+    {
+        label: 'AI销售角色',
         value: 'aiSales',
         icon: 'mdi:key',
-        type: 'system'
+        type: 'system',
+        content: "你是一位专业的销售助手"
     },
 ]
 
-export default function PromptNodePropertyPanel({ id, data, updateData }: PromptNodePropertyPanelProps) {
-    const selectedOption = promptOptions.find(opt => opt.value === data.promptCode)
+export default function PromptSelectorNodePropertyPanel({ id, data, updateData }: PromptNodePropertyPanelProps) {
+    const selectedOption = promptOptions.find(opt => opt.value === data.nodeConfig.promptCode)
+    const [promptMessage, setPromptMessage] = useState('');
+    const variableData: any = useNodePathPreOutputData(id);
+    // 设置输出变量
+    useEffect(() => {
+        updateData({
+            nodeOutput: [
+                {
+                    id,
+                    type: InputTypeEnum.TEXT,
+                    name: 'promptMessage',
+                    label: '提示词文本',
+                    required: true
+                }
+            ]
+        })
+    }, [id])
+
+    useEffect(() => {
+        handlePromptMessageChange(selectedOption?.content ?? "")
+    }, [])
+
+    const handlePromptMessageChange = (newValue: string) => {
+        setPromptMessage(newValue)
+    }
 
     return (
         <div className="flex flex-col gap-5 p-5">
@@ -62,15 +96,14 @@ export default function PromptNodePropertyPanel({ id, data, updateData }: Prompt
                     唯一标识符
                 </label>
                 <div className="flex">
-                    <input 
-                        type="text" 
-                        value={id} 
-                        readOnly 
-                        className="h-9 w-full border border-gray-600 rounded-lg bg-gray-700/50 px-3 text-sm font-medium shadow-sm outline-none transition-all duration-200 hover:bg-gray-600/50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 read-only:text-gray-400 read-only:cursor-not-allowed read-only:hover:bg-gray-700/50" 
+                    <input
+                        type="text"
+                        value={id}
+                        readOnly
+                        className="h-9 w-full border border-gray-600 rounded-lg bg-gray-700/50 px-3 text-sm font-medium shadow-sm outline-none transition-all duration-200 hover:bg-gray-600/50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 read-only:text-gray-400 read-only:cursor-not-allowed read-only:hover:bg-gray-700/50"
                     />
                 </div>
             </div>
-
             {/* 提示词选择 */}
             <div className="flex flex-col gap-2">
                 <label className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wide">
@@ -93,7 +126,7 @@ export default function PromptNodePropertyPanel({ id, data, updateData }: Prompt
                         </DropdownMenu.Trigger>
 
                         <DropdownMenu.Portal>
-                            <DropdownMenu.Content 
+                            <DropdownMenu.Content
                                 className="min-w-[var(--radix-dropdown-menu-trigger-width)] bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-50 animate-in fade-in-80 zoom-in-95"
                                 sideOffset={5}
                                 align="start"
@@ -104,16 +137,17 @@ export default function PromptNodePropertyPanel({ id, data, updateData }: Prompt
                                         className={cn(
                                             "flex items-center justify-between px-3 py-2 text-sm cursor-pointer outline-none transition-colors",
                                             "hover:bg-gray-700 focus:bg-gray-700",
-                                            data.promptCode === option.value && "text-blue-400 bg-blue-500/10"
+                                            data.nodeConfig.promptCode === option.value && "text-blue-400 bg-blue-500/10"
                                         )}
                                         onClick={() => {
-                                            updateData({ promptCode: option.value, promptType: option.type as any })
+                                            setPromptMessage(selectedOption?.content ?? "")
+                                            updateData({ ...data, nodeConfig: { promptCode: option.value, promptType: option.type as any } })
                                         }}
                                     >
                                         <div className="flex items-center gap-2">
                                             <span>{option.type}-{option.label}</span>
                                         </div>
-                                        
+
                                     </DropdownMenu.Item>
                                 ))}
                             </DropdownMenu.Content>
@@ -123,16 +157,22 @@ export default function PromptNodePropertyPanel({ id, data, updateData }: Prompt
             </div>
 
             {/* 当前选择显示 */}
-            {selectedOption && (
-                <div className="flex flex-col gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                    <div className="flex items-center gap-2 text-xs font-medium text-blue-400 uppercase tracking-wide">
-                        当前选择
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-200 ml-5.5">
-                        {selectedOption.label}
-                    </div>
-                </div>
-            )}
+            <div
+                className="flex flex-col gap-2"
+            >
+                <label className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wide">
+                    提示词
+                </label>
+                <VariableInput
+                    onRefValueChange={
+                        (refValues) => {
+                            updateData({ ...data, inputConfig: { ...data.inputConfig, refInputs: refValues } })
+                        }
+                    }
+                    variables={variableData} placeholder='请输入提示词内容' value={promptMessage} onChange={handlePromptMessageChange} row={6} type='none' />
+            </div>
+
+
         </div>
     )
 }

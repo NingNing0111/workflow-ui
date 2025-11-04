@@ -27,12 +27,11 @@ const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showN
         showNodePropertiesOf({ id, type: NODE_TYPE })
     }, [id, showNodePropertiesOf])
 
-
   return (
     <>
       <div
         data-selected={selected}
-        className="flex items-center border border-dark-100 rounded-full bg-dark-300 px-4 py-2 shadow-sm transition data-[selected=true]:(border-teal-600 ring-1 ring-teal-600/50)"
+        className="flex items-center border border-dark-100 rounded-full bg-dark-300 px-4 py-2 shadow-sm transition data-[selected=true]:(border-purple-600 ring-1 ring-purple-600/50)"
         onDoubleClick={showNodeProperties}
       >
         <div className={cn(meta.icon, 'size-4.5 shrink-0 mr-2 scale-130')} />
@@ -75,7 +74,8 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
     },
     nodeConfig: {
 
-    }
+    },
+    nodeOutput: []
   },
   propertyPanel: UnavailableNodePropertyPanel,
   requiredVariable: []

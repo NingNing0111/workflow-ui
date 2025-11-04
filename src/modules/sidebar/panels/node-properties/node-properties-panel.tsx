@@ -1,7 +1,7 @@
 import { useNodes, useReactFlow } from '@xyflow/react'
 import { produce } from 'immer'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import SplitPane, { Pane } from 'split-pane-react'
 
 import { BuilderNode } from '~/modules/nodes/types'
@@ -11,6 +11,7 @@ import { NodeListItem } from '~/modules/sidebar/panels/node-properties/component
 import { NodePropertyPanel } from '~/modules/sidebar/panels/node-properties/components/node-propery-panel'
 import { useNodeList } from '~/modules/sidebar/panels/node-properties/hooks/use-node-list'
 import IntroductionPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/introduction-property-panel'
+import NoVariablePanel from '~/modules/sidebar/panels/node-properties/variable-panels/no-variable-panel'
 import NodeVariablePropertiesPanel from '~/modules/sidebar/panels/node-properties/variable-panels/variable-panel'
 import { useApplicationState } from '~/stores/application-state'
 import { trackSomethingInNodeProperties } from '~/utils/ga4'
@@ -45,10 +46,11 @@ export function NodePropertiesPanel() {
               变量
             </SidebarPanelHeading>
             <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
-              {selectedNode ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <IntroductionPropertyPanel />}
+              {selectedNode && selectedNode.type !== 'start' && selectedNode.type !== 'end' ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <NoVariablePanel />}
             </OverlayScrollbarsComponent>
           </div>
         </Pane>
+
 
 
         <Pane minSize={200}>
@@ -65,6 +67,8 @@ export function NodePropertiesPanel() {
             </OverlayScrollbarsComponent>
           </div>
         </Pane>
+
+        
       </SplitPane>
 
     </SidebarPanelWrapper>
