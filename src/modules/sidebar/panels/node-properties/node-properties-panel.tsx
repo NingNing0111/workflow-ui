@@ -44,7 +44,7 @@ export function NodePropertiesPanel() {
           <div className="h-full flex flex-col">
             <SidebarPanelHeading className="shrink-0">
               <div className="i-mynaui:code-diamond size-4.5" />
-              变量
+              变量信息
             </SidebarPanelHeading>
             <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
               {selectedNode && selectedNode.type !== 'start' && selectedNode.type !== 'end' ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <NoVariablePanel />}
@@ -58,7 +58,7 @@ export function NodePropertiesPanel() {
           <div className="h-full flex flex-col">
             <SidebarPanelHeading className="shrink-0">
               <div className="i-mynaui:cog size-4.5" />
-              属性
+              节点属性
             </SidebarPanelHeading>
 
             <OverlayScrollbarsComponent className="grow" defer options={defaultOverlayScrollbarsOptions}>

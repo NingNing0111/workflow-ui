@@ -1,5 +1,5 @@
 import type { Node, NodeProps } from '@xyflow/react'
-import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
+import type { BaseNodeData, NodeIOData, RegisterNodeMetadata } from '~/modules/nodes/types'
 import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
@@ -12,10 +12,12 @@ import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
 import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
+import UserInputPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/user-input-property-panel'
 
 const NODE_TYPE = BuilderNode.USER_INPUT
 
 export interface UserInputNodeData {
+    userInputs: NodeIOData[]
 }
 
 type UserInputNodeProps = NodeProps<Node<BaseNodeData<UserInputNodeData>, typeof NODE_TYPE>>
@@ -89,7 +91,7 @@ export function UserInputNode({ id, isConnectable, selected, data }: UserInputNo
                 </div>
 
                 {/* 遍历userInputs进行展示 */}
-                {data.inputConfig && data.inputConfig.userInputs.map((input, index) => (
+                {data.inputConfig && data.nodeConfig.userInputs.map((input, index) => (
                     <div
                         key={index}
                         className="flex items-center justify-between text-xs text-light-900/70 bg-dark-300/40 rounded-md px-2 py-1"
@@ -155,6 +157,10 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
 
     defaultData: {
         inputConfig: {
+            // 可引用其它节点的变量信息
+            refInputs: []
+        },
+        nodeConfig: {
             // 节点输入信息
             userInputs: [
                 {
@@ -170,10 +176,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
                     required: true
                 }
             ],
-            // 可引用其它节点的变量信息
-            refInputs: []
-        },
-        nodeConfig: {
         },
         nodeOutput: [
             {
@@ -191,6 +193,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
         ]
 
     },
-    propertyPanel: UnavailableNodePropertyPanel,
+    propertyPanel: UserInputPropertyPanel,
     requiredVariable: []
 }

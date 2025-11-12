@@ -196,7 +196,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<LLMOutputNodeData>> = {
   defaultData: {
     label: '大模型输出',
     inputConfig: {
-      userInputs: [],
       refInputs: []
     },
     nodeConfig: {

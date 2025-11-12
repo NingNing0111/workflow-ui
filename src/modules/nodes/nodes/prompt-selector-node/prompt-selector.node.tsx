@@ -18,7 +18,8 @@ const NODE_TYPE = BuilderNode.PROMPT_SELECTOR
 
 export interface PromptSelectorNodeData {
     promptCode: string;
-    promptType: 'system' | 'user'
+    promptType: 'system' | 'user',
+    promptMessage?: string
 }
 
 type PromptSelectorNodeProps = NodeProps<Node<BaseNodeData<PromptSelectorNodeData>, typeof NODE_TYPE>>
@@ -169,7 +170,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<PromptSelectorNodeData>
     defaultData: {
         label: '提示词选择器',
         inputConfig: {
-            userInputs: [],
             refInputs: []
         },
         nodeConfig: {

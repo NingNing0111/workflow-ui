@@ -40,7 +40,6 @@ export interface RegisterNodeMetadata<T = Record<string, any>> {
 export interface BaseNodeData<T> extends Record<string, any> {
   deletable?: boolean;
   inputConfig: {
-    userInputs: NodeIOData[], // 节点输入变量
     refInputs: NodeParamRefData[] // 节点引用变量
   },
   nodeConfig: T, // 节点配置

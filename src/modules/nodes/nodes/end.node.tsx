@@ -72,7 +72,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<EndNodeData>> = {
     label: '结束',
     deletable: false,
     inputConfig: {
-      userInputs: [],
       refInputs: []
     },
     nodeConfig: {},

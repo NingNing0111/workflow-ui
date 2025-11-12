@@ -37,9 +37,7 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
                 </div>
             </div>
             {/* 模型名称 */}
-            <div
-                className="flex flex-col gap-2"
-            >
+            <div className="flex flex-col gap-2">
                 <label className="flex items-center gap-2 text-xs font-medium text-gray-400 uppercase tracking-wide">
                     模型名称
                 </label>
@@ -49,7 +47,7 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
                     }}
                     placeholder='请输入模型名称'
                     type='text'
-                    row={1}
+                    row={2}
                     value={llmOutputConfig.modelName}
                     onChange={(newValue) => {
                         updateData({ ...data, nodeConfig: { ...data.nodeConfig, modelName: newValue } })
@@ -58,9 +56,8 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
 
             </div>
 
-
             {/* 上下文长度 */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
                 <div className="text-xs text-light-900/60 font-semibold">
                     上下文长度
                 </div>
@@ -107,7 +104,7 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
             </div>
 
             {/* 是否开启思考 */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
                 <div className="text-xs text-light-900/60 font-semibold mb-2">
                     是否开启思考
                 </div>
@@ -168,7 +165,7 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
             </div>
 
             {/* 是否流式输出 */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
                 <div className="text-xs text-light-900/60 font-semibold mb-2">
                     流式输出
                 </div>

@@ -63,16 +63,21 @@ const promptOptions = [
 
 export default function PromptSelectorNodePropertyPanel({ id, data, updateData }: PromptNodePropertyPanelProps) {
     const selectedOption = promptOptions.find(opt => opt.value === data.nodeConfig.promptCode)
-    const [promptMessage, setPromptMessage] = useState('');
+    const [promptMessage, setPromptMessage] = useState(data.nodeConfig.promptMessage ?? selectedOption?.content ?? "");
     const variableData: any = useNodePathPreOutputData(id);
-
-    useEffect(() => {
-        handlePromptMessageChange(selectedOption?.content ?? "")
-    }, [])
 
     const handlePromptMessageChange = (newValue: string) => {
         setPromptMessage(newValue)
+        updateData({nodeConfig: {...data.nodeConfig, promptMessage: newValue}})
     }
+
+    useEffect(() => {
+        if (data.nodeConfig.promptMessage) {
+            handlePromptMessageChange(data.nodeConfig.promptMessage)
+        } else {
+            handlePromptMessageChange(selectedOption?.content ?? "")
+        }
+    }, [data.nodeConfig.promptCode])
 
     return (
         <div className="flex flex-col gap-5 p-5">
@@ -126,8 +131,7 @@ export default function PromptSelectorNodePropertyPanel({ id, data, updateData }
                                             data.nodeConfig.promptCode === option.value && "text-blue-400 bg-blue-500/10"
                                         )}
                                         onClick={() => {
-                                            setPromptMessage(selectedOption?.content ?? "")
-                                            updateData({ ...data, nodeConfig: { promptCode: option.value, promptType: option.type as any } })
+                                            updateData({nodeConfig: {promptCode: option.value, promptType: option.type as any, promptMessage: option.content}})
                                         }}
                                     >
                                         <div className="flex items-center gap-2">

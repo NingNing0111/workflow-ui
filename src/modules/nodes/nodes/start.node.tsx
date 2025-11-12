@@ -69,7 +69,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
     label: '开始',
     deletable: false,
     inputConfig: {
-      userInputs: [],
       refInputs: []
     },
     nodeConfig: {

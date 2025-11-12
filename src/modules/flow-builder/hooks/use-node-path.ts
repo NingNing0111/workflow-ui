@@ -24,7 +24,7 @@ export const useAllPathsToNode = (targetNodeId: string) => {
 
         // 队列保存 [当前节点ID, 路径数组]
         const queue: [string, any[]][] = [[startNode.id, []]];
-
+        // BFS找全路径
         while (queue.length > 0) {
             const [currentNodeId, currentPath] = queue.shift()!;
             const currentNode = nodes.find((n) => n.id === currentNodeId);
