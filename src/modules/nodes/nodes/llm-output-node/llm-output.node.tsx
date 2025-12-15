@@ -1,6 +1,6 @@
 import type { Node, NodeProps } from '@xyflow/react'
 import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
-import { Position, useReactFlow } from '@xyflow/react'
+import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
@@ -9,7 +9,6 @@ import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
 import { BuilderNode, InputTypeEnum } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 import { useApplicationState } from '~/stores/application-state'
-import { TargetPrompt } from '~/modules/nodes/nodes/llm-output-node/components/target-prompt'
 import LLMOutputNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/llm-output-panel'
 
 const NODE_TYPE = BuilderNode.LLM_OUTPUT

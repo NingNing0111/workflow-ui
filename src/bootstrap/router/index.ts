@@ -7,6 +7,7 @@ import { routeTree } from '~/../.generated/route-tree.gen'
 export const router = createRouter({
   routeTree,
   defaultNotFoundComponent: RouteNotFound,
+  basepath: '/workflow'
 })
 
 declare module '@tanstack/react-router' {

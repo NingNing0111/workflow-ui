@@ -7,10 +7,11 @@ import { useFlowValidator } from '~/modules/flow-builder/hooks/use-flow-validato
 
 import { useApplicationState } from '~/stores/application-state'
 import { useReactFlow } from '@xyflow/react'
+import { runWorkflow, updateWorkflow } from '~/api/workflow'
 
 export function NavigationBarModule() {
 
-    const { getNodes, getEdges } = useReactFlow()
+  const { getNodes, getEdges } = useReactFlow()
   const [isMobileView] = useApplicationState(s => [s.view.mobile])
 
   const [isValidating, validateFlow] = useFlowValidator((isValid) => {
@@ -24,9 +25,39 @@ export function NavigationBarModule() {
   const submitApp = () => {
     const nodes = getNodes();
     const edges = getEdges();
+    // updateWorkflow({
+    //   workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
+    //   nodes: nodes,
+    //   edges: edges
+    // })
 
     console.log(nodes);
     console.log(edges);
+  }
+
+  const runApp = () => {
+    runWorkflow({
+      workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
+      inputs: [{
+        "name": "userInput",
+        "content": {
+          "label": "用户输入",
+          "value": "介绍下Rust这门语言，在哪些领域有优势",
+          "type": 1
+        }
+      },{
+        "name": "chatModel",
+        "content": {
+          "label" :"对话模型",
+          "value": "qwen-plus",
+          "type": 1
+        }
+      }]
+    },{
+      onMessage(event) {
+        console.log(event.data);
+      },
+    })
   }
 
   return (
@@ -92,6 +123,17 @@ export function NavigationBarModule() {
               <span>发布</span>
             </button>
 
+            <button
+              type="button"
+              className={cn(
+                'h-full flex items-center justify-center gap-x-2 border border-dark-300 rounded-lg bg-dark-300/50 px-3 text-sm font-medium transition',
+                'hover:(bg-dark-200) active:(bg-dark-400)',
+              )}
+
+              onClick={()=>{
+                runApp();
+              }}
+            ><div className="i-mynaui:code-octagon size-5" /><span>调试</span></button>
           </div>
         </Whenever>
       </div>

@@ -1,7 +1,7 @@
 {
-  "name": "chatbot-flow-builder-starter-kit",
+  "name": "huice-ai-workflow-ui",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,7 @@
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/themes": "^3.2.1",
     "@vercel/analytics": "^1.5.0",
-    "chatbot-flow-builder-starter-kit": "link:",
+    "axios": "^1.13.2",
     "radix-ui": "^1.4.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

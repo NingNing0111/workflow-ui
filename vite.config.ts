@@ -15,6 +15,18 @@ export default defineConfig({
       { find: '~@', replacement: fileURLToPath(new URL('./src/bootstrap', import.meta.url)) },
     ],
   },
+  base: '/workflow',
+  server: {
+    port: 5666,
+    proxy: {
+      '/prod-api': {
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/prod-api/, ''),
+        target: 'http://43.143.218.56:9105/prod-api',
+        ws: true,
+      },
+    },
+  },
   plugins: [
     unocss(),
     tanStackRouter({
@@ -41,4 +53,5 @@ export default defineConfig({
       ],
     }),
   ],
+
 })

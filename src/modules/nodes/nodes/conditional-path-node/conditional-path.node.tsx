@@ -59,7 +59,7 @@ export function ConditionalPathNode({ id, isConnectable, selected, data }: Condi
   )
 
   const filteredCaseList = useMemo<Omit<ConditionalPathNodeData['paths'][number], 'id'>['case'][]>(() => {
-    return caseList.filter(c => !data.paths.some(p => p.case.value === c.value))
+    return caseList.filter(c => !data.paths.some((p:any) => p.case.value === c.value))
   }, [data.paths])
 
   const addNodePath = useCallback(
@@ -164,7 +164,7 @@ export function ConditionalPathNode({ id, isConnectable, selected, data }: Condi
 
           {data.paths.length > 0 && (
             <div className="mt-2 flex flex-col">
-              {data.paths.map(path => (
+              {data.paths.map((path:any) => (
                 <NodePath
                   key={path.id}
                   id={path.id}

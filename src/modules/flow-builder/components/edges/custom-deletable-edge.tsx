@@ -3,7 +3,6 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
-  useReactFlow,
 } from '@xyflow/react'
 
 export default function CustomDeletableEdge(props: EdgeProps) {
@@ -16,12 +15,10 @@ export default function CustomDeletableEdge(props: EdgeProps) {
     sourcePosition,
     targetPosition,
     style = {},
-    markerEnd,
   } = props
 
-  const { setEdges } = useReactFlow()
 
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath] = getBezierPath({
     sourceX,
     sourceY,
     sourcePosition,

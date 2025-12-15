@@ -11,9 +11,16 @@
 // Import Routes
 
 import { Route as rootRoute } from "./../src/pages/__root";
+import { Route as R403Import } from "./../src/pages/403";
 import { Route as IndexImport } from "./../src/pages/index";
 
 // Create/Update Routes
+
+const R403Route = R403Import.update({
+  id: "/403",
+  path: "/403",
+  getParentRoute: () => rootRoute,
+} as any);
 
 const IndexRoute = IndexImport.update({
   id: "/",
@@ -32,6 +39,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexImport;
       parentRoute: typeof rootRoute;
     };
+    "/403": {
+      id: "/403";
+      path: "/403";
+      fullPath: "/403";
+      preLoaderRoute: typeof R403Import;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
@@ -39,32 +53,37 @@ declare module "@tanstack/react-router" {
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
+  "/403": typeof R403Route;
 }
 
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
+  "/403": typeof R403Route;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   "/": typeof IndexRoute;
+  "/403": typeof R403Route;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/";
+  fullPaths: "/" | "/403";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/";
-  id: "__root__" | "/";
+  to: "/" | "/403";
+  id: "__root__" | "/" | "/403";
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
+  R403Route: typeof R403Route;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R403Route: R403Route,
 };
 
 export const routeTree = rootRoute
@@ -77,11 +96,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/403"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/403": {
+      "filePath": "403.tsx"
     }
   }
 }

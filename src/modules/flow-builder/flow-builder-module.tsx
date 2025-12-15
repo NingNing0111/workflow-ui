@@ -15,7 +15,6 @@ import { useNodeAutoAdjust } from '~/modules/flow-builder/hooks/use-node-auto-ad
 import { useOnNodesDelete } from '~/modules/flow-builder/hooks/use-on-nodes-delete'
 import { NODE_TYPES } from '~/modules/nodes'
 import { useApplicationState } from '~/stores/application-state'
-import { produce } from 'immer'
 
 const edgeTypes: EdgeTypes = {
   deletable: CustomDeletableEdge,
@@ -35,7 +34,7 @@ export function FlowBuilderModule() {
     onEdgesChange,
   ] = useEdgesState<Edge>(defaultEdges)
 
-  const { getNodes, setNodes, getNode } = useReactFlow()
+  const { getNodes, setNodes} = useReactFlow()
 
   const deleteKeyCode = useDeleteKeyCode()
   const onNodesDelete = useOnNodesDelete(nodes)
@@ -51,9 +50,6 @@ export function FlowBuilderModule() {
       const edge = { ...connection, id: nanoid(), type: 'deletable' } as Edge
       setEdges(edges => addEdge(edge, edges))
 
-      const { source, target } = connection;
-      const sourceNode = getNode(source);
-      const targetNode = getNode(target);
 
     },
     [setEdges, setNodes],

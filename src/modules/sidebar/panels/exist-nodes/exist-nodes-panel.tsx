@@ -1,7 +1,6 @@
 import { useNodes, useReactFlow } from "@xyflow/react";
 import { produce } from "immer";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
-import SplitPane, { Pane } from "split-pane-react";
 import { BuilderNode } from "~/modules/nodes/types";
 import SidebarPanelHeading from "~/modules/sidebar/components/sidebar-panel-heading";
 import SidebarPanelWrapper from "~/modules/sidebar/components/sidebar-panel-wrapper"
@@ -12,7 +11,7 @@ import { trackSomethingInNodeProperties } from "~/utils/ga4";
 import { defaultOverlayScrollbarsOptions } from '~/utils/overlayscrollbars'
 const ExistNodesPanel = () => {
 
-    const { paneSizes, selectedNode, setPaneSizes, setSelectedNode } = useApplicationState(s => ({
+    const {  selectedNode,  setSelectedNode } = useApplicationState(s => ({
         paneSizes: s.sidebar.panels.nodeProperties.paneSizes,
         setPaneSizes: s.actions.sidebar.panels.nodeProperties.setPaneSizes,
         selectedNode: s.sidebar.panels.nodeProperties.selectedNode,

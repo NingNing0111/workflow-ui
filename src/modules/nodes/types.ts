@@ -6,10 +6,10 @@ export const DEFAULT_END_ID = "END";
 export enum BuilderNode {
   START = 'start', // 开始节点
   END = 'end', // 结束节点
-  USER_INPUT = 'user-input', // 用户输入
-  LLM_OUTPUT = 'llm-output', // 大模型输出
-  PROMPT_SELECTOR = 'prompt-selector', // 提示词选择器
-  CONDITIONAL_PATH = 'conditional-path', // 分支判断节点
+  USER_INPUT = 'userInput', // 用户输入
+  LLM_OUTPUT = 'llmOutput', // 大模型输出
+  PROMPT_SELECTOR = 'promptSelector', // 提示词选择器
+  CONDITIONAL_PATH = 'conditionalPath', // 分支判断节点
 }
 
 export type BuilderNodeType = `${BuilderNode}`

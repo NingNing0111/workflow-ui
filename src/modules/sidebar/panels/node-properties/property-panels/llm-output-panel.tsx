@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useNodePathPreOutputData } from '~/modules/flow-builder/hooks/use-node-path';
 import type { LLMOutputNodeData } from '~/modules/nodes/nodes/llm-output-node/llm-output.node';
-import { InputTypeEnum, type BaseNodeData, type BuilderNodeType, type NodeIOData } from '~/modules/nodes/types'
+import {  type BaseNodeData, type BuilderNodeType } from '~/modules/nodes/types'
 import VariableInput from '~/modules/sidebar/panels/node-properties/components/variable-input';
 
 import { cn } from '~@/utils/cn'

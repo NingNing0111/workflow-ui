@@ -1,11 +1,10 @@
-import { InputTypeEnum, type BaseNodeData, type BuilderNodeType, type NodeParamRefData } from '~/modules/nodes/types'
+import {  type BaseNodeData, type BuilderNodeType} from '~/modules/nodes/types'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import { cn } from '~@/utils/cn'
 import type { PromptSelectorNodeData } from '~/modules/nodes/nodes/prompt-selector-node/prompt-selector.node';
 import { useEffect, useState } from 'react';
 import VariableInput from '~/modules/sidebar/panels/node-properties/components/variable-input';
-import { TextArea } from '@radix-ui/themes';
 import { useNodePathPreOutputData } from '~/modules/flow-builder/hooks/use-node-path';
 
 

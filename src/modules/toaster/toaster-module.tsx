@@ -9,7 +9,6 @@ export function ToasterModule() {
     <Toaster
       richColors
       position={isMobileView ? 'top-center' : 'bottom-center'}
-      theme="dark"
       gap={12}
       closeButton
       toastOptions={{

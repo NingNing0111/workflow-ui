@@ -1,5 +1,5 @@
 import type { Node, NodeProps } from '@xyflow/react'
-import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
+import type { BaseNodeData, NodeIOData, RegisterNodeMetadata } from '~/modules/nodes/types'
 import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
@@ -9,23 +9,25 @@ import CustomHandle from '~/modules/flow-builder/components/handles/custom-handl
 import { BuilderNode } from '~/modules/nodes/types'
 
 import { getNodeDetail } from '~/modules/nodes/utils'
-import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
 import { useApplicationState } from '~/stores/application-state'
+import StartPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/start-property-panel'
 
-export interface StartNodeData  {
+export interface StartNodeData {
+  userInputs: NodeIOData[]
+
 }
 
 const NODE_TYPE = BuilderNode.START
 
 type StartNodeProps = NodeProps<Node<BaseNodeData<StartNodeData>, typeof NODE_TYPE>>
 
-export function StartNode({ id,data, selected, isConnectable }: StartNodeProps) {
+export function StartNode({ id, data, selected, isConnectable }: StartNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
-const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
+  const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
   const [sourceHandleId] = useState<string>(nanoid())
-    const showNodeProperties = useCallback(() => {
-        showNodePropertiesOf({ id, type: NODE_TYPE })
-    }, [id, showNodePropertiesOf])
+  const showNodeProperties = useCallback(() => {
+    showNodePropertiesOf({ id, type: NODE_TYPE })
+  }, [id, showNodePropertiesOf])
 
   return (
     <>
@@ -72,10 +74,36 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
       refInputs: []
     },
     nodeConfig: {
-
+      userInputs: [
+        {
+          type: 1,
+          name: "userInput",
+          label: "用户输入",
+          required: true
+        },
+        {
+          type: 2,
+          name: 'userId',
+          label: '用户ID',
+          required: true
+        }
+      ]
     },
-    nodeOutput: []
+    nodeOutput: [
+                  {
+                type: 1,
+                name: "userInput",
+                label: "用户输入",
+                required: true
+            },
+            {
+                type: 2,
+                name: 'userId',
+                label: '用户ID',
+                required: true
+            }
+    ]
   },
-  propertyPanel: UnavailableNodePropertyPanel,
+  propertyPanel: StartPropertyPanel,
   requiredVariable: []
 }

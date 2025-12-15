@@ -1,25 +1,19 @@
-import { Button } from '@radix-ui/themes'
-import { useNodes, useReactFlow } from '@xyflow/react'
-import { produce } from 'immer'
+import { useNodes, } from '@xyflow/react'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-import { useCallback, useMemo } from 'react'
+import {  useMemo } from 'react'
 import SplitPane, { Pane } from 'split-pane-react'
 
-import { BuilderNode } from '~/modules/nodes/types'
 import SidebarPanelHeading from '~/modules/sidebar/components/sidebar-panel-heading'
 import SidebarPanelWrapper from '~/modules/sidebar/components/sidebar-panel-wrapper'
-import { NodeListItem } from '~/modules/sidebar/panels/node-properties/components/node-list-item'
 import { NodePropertyPanel } from '~/modules/sidebar/panels/node-properties/components/node-propery-panel'
-import { useNodeList } from '~/modules/sidebar/panels/node-properties/hooks/use-node-list'
 import IntroductionPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/introduction-property-panel'
 import NoVariablePanel from '~/modules/sidebar/panels/node-properties/variable-panels/no-variable-panel'
 import NodeVariablePropertiesPanel from '~/modules/sidebar/panels/node-properties/variable-panels/variable-panel'
 import { useApplicationState } from '~/stores/application-state'
-import { trackSomethingInNodeProperties } from '~/utils/ga4'
 import { defaultOverlayScrollbarsOptions } from '~/utils/overlayscrollbars'
 
 export function NodePropertiesPanel() {
-  const { paneSizes, selectedNode, setPaneSizes, setSelectedNode } = useApplicationState(s => ({
+  const { paneSizes, selectedNode, setPaneSizes } = useApplicationState(s => ({
     paneSizes: s.sidebar.panels.nodeProperties.paneSizes,
     setPaneSizes: s.actions.sidebar.panels.nodeProperties.setPaneSizes,
     selectedNode: s.sidebar.panels.nodeProperties.selectedNode,
@@ -47,7 +41,7 @@ export function NodePropertiesPanel() {
               变量信息
             </SidebarPanelHeading>
             <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
-              {selectedNode && selectedNode.type !== 'start' && selectedNode.type !== 'end' ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <NoVariablePanel />}
+              {selectedNode && selectedNode.type !== 'end' ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <NoVariablePanel />}
             </OverlayScrollbarsComponent>
           </div>
         </Pane>

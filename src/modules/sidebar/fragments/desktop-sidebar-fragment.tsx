@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 
 import SidebarButtonItem from '~/modules/sidebar/components/sidebar-button-item'
 import { SwitchSidebarPanel } from '~/modules/sidebar/components/sidebar-switch-panel'
-import { Button } from '@radix-ui/themes'
 
 type DesktopSidebarFragmentProps = Readonly<{
   isMobileView: ApplicationState['view']['mobile'];

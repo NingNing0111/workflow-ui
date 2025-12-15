@@ -1,6 +1,6 @@
 import type { Node, NodeProps } from '@xyflow/react'
 import type { BaseNodeData, RegisterNodeMetadata } from '~/modules/nodes/types'
-import { Position, useReactFlow } from '@xyflow/react'
+import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
 import { memo, useCallback, useMemo, useState } from 'react'
@@ -26,7 +26,6 @@ type PromptSelectorNodeProps = NodeProps<Node<BaseNodeData<PromptSelectorNodeDat
 
 export function UserInputNode({ id, isConnectable, selected, data }: PromptSelectorNodeProps) {
     const meta = useMemo(() => getNodeDetail(NODE_TYPE), [])
-    const { setNodes } = useReactFlow()
     const [showNodePropertiesOf] = useApplicationState(s => [s.actions.sidebar.showNodePropertiesOf])
     const [targetHandleId] = useState<string>(nanoid())
     const [sourceHandleId] = useState<string>(nanoid())

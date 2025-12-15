@@ -1,14 +1,11 @@
-import { useReactFlow } from "@xyflow/react";
 import { produce } from "immer";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import {
     BuilderNode,
     GetInputType,
     type BuilderNodeType,
-    type NodeIOData,
     type NodeParamRefData,
 } from "~/modules/nodes/types";
-import { trackSomethingInNodeProperties } from "~/utils/ga4";
 import { useNodePathPreOutputData } from "~/modules/flow-builder/hooks/use-node-path";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Tooltip } from "radix-ui";
@@ -84,7 +81,7 @@ const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps)
                 </div>
             </div>
             {/* ===== 引用输入变量 ===== */}
-            {type !== "user-input" && (
+            {type !== "userInput" && (
                 <div>
                     <h3 className="text-sm font-semibold text-gray-300 mb-2">引用节点变量</h3>
 

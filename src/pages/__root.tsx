@@ -31,7 +31,6 @@ function RootLayout() {
   return (
     <>
       <Outlet />
-
       <Whenever condition={isProduction}>
         <Suspense>
           <TanStackRouterDevtools />

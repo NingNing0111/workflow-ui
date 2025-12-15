@@ -80,15 +80,6 @@ export function MobileSidebarFragment({ activePanel, setActivePanel }: MobileSid
             <div className="i-mynaui:brand-linkedin size-5" />
           </a>
 
-          <a
-            href="https://github.com/denishsharma/chatbot-flow-builder-starter-kit"
-            onClick={() => trackSocialLinkClick('github')}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="size-10 flex shrink-0 items-center justify-center border border-transparent rounded-full bg-transparent outline-none transition active:(border-dark-300 bg-dark-600)"
-          >
-            <div className="i-mynaui:brand-github size-5" />
-          </a>
         </div>
       </div>
 

@@ -1,5 +1,4 @@
-import type { Edge, Node } from '@xyflow/react'
-import type { BuilderNodeType } from '~/modules/nodes/types'
+import type {  Node } from '@xyflow/react'
 import { useReactFlow } from '@xyflow/react'
 import { useCallback, useState } from 'react'
 import { BuilderNode } from '~/modules/nodes/types'

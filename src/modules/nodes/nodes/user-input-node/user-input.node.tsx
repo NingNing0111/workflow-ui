@@ -3,7 +3,7 @@ import type { BaseNodeData, NodeIOData, RegisterNodeMetadata } from '~/modules/n
 import { Position } from '@xyflow/react'
 import { nanoid } from 'nanoid'
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback,  useMemo, useState } from 'react'
 import { cn } from '~@/utils/cn'
 import CustomHandle from '~/modules/flow-builder/components/handles/custom-handle'
 import { useDeleteNode } from '~/modules/flow-builder/hooks/use-delete-node'
@@ -12,7 +12,6 @@ import { getNodeDetail } from '~/modules/nodes/utils'
 
 import { useApplicationState } from '~/stores/application-state'
 import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
-import UserInputPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/user-input-property-panel'
 
 const NODE_TYPE = BuilderNode.USER_INPUT
 
@@ -193,6 +192,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<UserInputNodeData>> = {
         ]
 
     },
-    propertyPanel: UserInputPropertyPanel,
+    propertyPanel: UnavailableNodePropertyPanel,
     requiredVariable: []
 }

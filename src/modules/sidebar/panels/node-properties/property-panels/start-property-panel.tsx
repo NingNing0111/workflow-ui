@@ -3,19 +3,18 @@ import type { UserInputNodeData } from "~/modules/nodes/nodes/user-input-node/us
 import { type NodeIOData, type BaseNodeData, type BuilderNodeType, InputTypeOptions } from "~/modules/nodes/types";
 import UnavailableNodePropertyPanel from "~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel";
 import * as Dialog from "@radix-ui/react-dialog";
-type UserInputNodePropertyPanelProps = Readonly<{
+type StartNodePropertyPanelProps = Readonly<{
     id: string;
     type: BuilderNodeType;
     data: BaseNodeData<UserInputNodeData>;
     updateData: (data: Partial<BaseNodeData<UserInputNodeData>>) => void;
 }>
 
-const UserInputPropertyPanel = ({ id, data, updateData }: UserInputNodePropertyPanelProps) => {
+const StartPropertyPanel = ({ id, data, updateData }: StartNodePropertyPanelProps) => {
 
     const [userInputs, setUserInputs] = useState<NodeIOData[]>(data.nodeConfig.userInputs)
     const [editingVar, setEditingVar] = useState<NodeIOData | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
 
     // ===== 用户输入变量操作 =====
     const handleAddVariable = () => {
@@ -166,4 +165,4 @@ const UserInputPropertyPanel = ({ id, data, updateData }: UserInputNodePropertyP
 }
 
 
-export default UserInputPropertyPanel
+export default StartPropertyPanel

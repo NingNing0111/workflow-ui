@@ -1,6 +1,5 @@
-import { useReactFlow, useStore } from "@xyflow/react"
+import {  useStore } from "@xyflow/react"
 import { useMemo } from "react"
-import { BuilderNode } from "~/modules/nodes/types"
 import { getNodeDetail } from "~/modules/nodes/utils"
 
 
