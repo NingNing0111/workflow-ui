@@ -25,14 +25,11 @@ export function NavigationBarModule() {
   const submitApp = () => {
     const nodes = getNodes();
     const edges = getEdges();
-    // updateWorkflow({
-    //   workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
-    //   nodes: nodes,
-    //   edges: edges
-    // })
-
-    console.log(nodes);
-    console.log(edges);
+    updateWorkflow({
+      workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
+      nodes: nodes,
+      edges: edges
+    })
   }
 
   const runApp = () => {
@@ -122,18 +119,6 @@ export function NavigationBarModule() {
               <div className="i-mynaui:rocket size-5" />
               <span>发布</span>
             </button>
-
-            <button
-              type="button"
-              className={cn(
-                'h-full flex items-center justify-center gap-x-2 border border-dark-300 rounded-lg bg-dark-300/50 px-3 text-sm font-medium transition',
-                'hover:(bg-dark-200) active:(bg-dark-400)',
-              )}
-
-              onClick={()=>{
-                runApp();
-              }}
-            ><div className="i-mynaui:code-octagon size-5" /><span>调试</span></button>
           </div>
         </Whenever>
       </div>

@@ -80,12 +80,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
           name: "userInput",
           label: "用户输入",
           required: true
-        },
-        {
-          type: 2,
-          name: 'userId',
-          label: '用户ID',
-          required: true
         }
       ]
     },
@@ -94,12 +88,6 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<StartNodeData>> = {
                 type: 1,
                 name: "userInput",
                 label: "用户输入",
-                required: true
-            },
-            {
-                type: 2,
-                name: 'userId',
-                label: '用户ID',
                 required: true
             }
     ]

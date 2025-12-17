@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ReactFlowProvider } from '@xyflow/react'
 import { useEffect } from 'react'
-import { createWorkflow } from '~/api/workflow'
 
 import { FlowBuilderModule } from '~/modules/flow-builder/flow-builder-module'
 import { NavigationBarModule } from '~/modules/navigation-bar/navigation-bar-module'

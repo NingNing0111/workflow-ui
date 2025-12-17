@@ -70,6 +70,64 @@ export const runWorkflow = async <T = any>(
 }
 
 
+export const debugWorkflow = async <T = any>(
+  data: any,
+  options: RunWorkflowOptions<T>
+) => {
+  const token = import.meta.env.VITE_APP_TEST_JWT;
+  const baseUrl = import.meta.env.VITE_APP_BASE_API;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    // "Accept": "text/event-stream",
+    "ClientID": import.meta.env.VITE_GLOB_APP_CLIENT_ID,
+    "Accept-Language": "zh_CN",
+    "Content-Language": "zh_CN",
+  }
+
+  const auth = formatToken(token as string)
+  if (auth) {
+    headers.Authorization = auth
+  }
+  const res = await fetch(baseUrl + "/workflow/debug", {
+    method: "POST",
+    headers,
+    body: JSON.stringify(data),
+    signal: options.signal,
+  })
+
+  if (!res.ok || !res.body) {
+    throw new Error("Workflow stream failed")
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder("utf-8")
+
+  let buffer = ""
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+
+      // 一个 event 以空行分隔
+      const chunks = buffer.split("\n\n")
+      buffer = chunks.pop() || ""
+
+      for (const chunk of chunks) {
+        const event = parseSSEChunk<T>(chunk)
+        if (event) {
+          options.onMessage?.(event)
+        }
+      }
+    }
+  } catch (err) {
+    options.onError?.(err)
+  }
+}
+
+
 function parseSSEChunk<T = any>(chunk: string): {
   event?: string
   data: T

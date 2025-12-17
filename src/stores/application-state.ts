@@ -3,6 +3,7 @@ import type { BuilderNodeType } from '~/modules/nodes/types'
 import { immer } from 'zustand/middleware/immer'
 
 import { createStoreContext, defineStoreInstance } from '~@/store'
+export type ActiveType = "available-nodes" | "node-properties" | "exist-nodes" | "online-debug" | "none";
 
 interface State {
   view: {
@@ -12,7 +13,8 @@ interface State {
     blurred: boolean;
   };
   sidebar: {
-    active: 'node-properties' | 'available-nodes' | 'exist-nodes' | 'none';
+    showSidebar: boolean;
+    active: ActiveType;
     panels: {
       nodeProperties: {
         selectedNode: { id: string; type: BuilderNodeType } | null | undefined;
@@ -31,7 +33,9 @@ interface Actions {
       setBlur: (blur: boolean) => void;
     };
     sidebar: {
-      setActivePanel: (panel: 'node-properties' | 'available-nodes' | 'exist-nodes' | 'none') => void;
+      setShowSidebar: (show: boolean) => void;
+      toggleSidebar: () => void;
+      setActivePanel: (panel: ActiveType) => void;
       showNodePropertiesOf: (node: { id: string; type: BuilderNodeType }) => void;
       panels: {
         nodeProperties: {
@@ -58,10 +62,17 @@ const applicationStateInstance = defineStoreInstance<State, Actions>((init) => {
         }),
       },
       sidebar: {
+        setShowSidebar: show => set((state) => {
+          state.sidebar.showSidebar = show
+        }),
+        toggleSidebar: () => set((state) => {
+          state.sidebar.showSidebar = !state.sidebar.showSidebar
+        }),
         setActivePanel: panel => set((state) => {
           state.sidebar.active = panel
         }),
         showNodePropertiesOf: node => set((state) => {
+          state.sidebar.showSidebar = true
           state.sidebar.active = 'node-properties'
           state.sidebar.panels.nodeProperties.selectedNode = node
         }),
@@ -86,6 +97,7 @@ const applicationStateInstance = defineStoreInstance<State, Actions>((init) => {
     blurred: false,
   },
   sidebar: {
+    showSidebar: false,
     active: 'none',
     panels: {
       nodeProperties: {

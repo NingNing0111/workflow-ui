@@ -1,24 +1,31 @@
-import { Switch } from '~@/components/generics/switch-case'
 import { DesktopSidebarFragment } from '~/modules/sidebar/fragments/desktop-sidebar-fragment'
-import { MobileSidebarFragment } from '~/modules/sidebar/fragments/mobile-sidebar-fragment'
 
 import { useApplicationState } from '~/stores/application-state'
 
 export function SidebarModule() {
-  const { isMobileView, activePanel, setActivePanel } = useApplicationState(s => ({
+  const {
+    isMobileView,
+    activePanel,
+    showSidebar,
+    setActivePanel,
+    toggleSidebar,
+  } = useApplicationState(s => ({
     isMobileView: s.view.mobile,
     activePanel: s.sidebar.active,
+    showSidebar: s.sidebar.showSidebar,
     setActivePanel: s.actions.sidebar.setActivePanel,
+    toggleSidebar: s.actions.sidebar.toggleSidebar,
   }))
 
+
+
   return (
-    <Switch match={isMobileView}>
-      <Switch.Case value>
-        <MobileSidebarFragment activePanel={activePanel} setActivePanel={setActivePanel} />
-      </Switch.Case>
-      <Switch.Default>
-        <DesktopSidebarFragment isMobileView={isMobileView} activePanel={activePanel} setActivePanel={setActivePanel} />
-      </Switch.Default>
-    </Switch>
+    <DesktopSidebarFragment
+      isMobileView={isMobileView}
+      activePanel={activePanel}
+      showSidebar={showSidebar}
+      setActivePanel={setActivePanel}
+      toggleSidebar={toggleSidebar}
+    />
   )
 }

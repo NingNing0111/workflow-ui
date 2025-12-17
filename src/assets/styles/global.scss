@@ -7,7 +7,7 @@
 @include meta.load-css('overrides/reactflow');
 
 body {
-  @apply font-normal w-full of-x-hidden text-light-50 bg-dark-700 scroll-smooth h-dvh;
+  @apply font-normal w-full of-x-hidden text-light-50  scroll-smooth h-dvh;
 }
 
 #root {
