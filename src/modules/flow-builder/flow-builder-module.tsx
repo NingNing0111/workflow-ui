@@ -15,6 +15,7 @@ import { useNodeAutoAdjust } from '~/modules/flow-builder/hooks/use-node-auto-ad
 import { useOnNodesDelete } from '~/modules/flow-builder/hooks/use-on-nodes-delete'
 import { NODE_TYPES } from '~/modules/nodes'
 import { useApplicationState } from '~/stores/application-state'
+import { useAppAppearanceStore } from '~/stores/appearanceStore'
 
 const edgeTypes: EdgeTypes = {
   deletable: CustomDeletableEdge,
@@ -22,7 +23,7 @@ const edgeTypes: EdgeTypes = {
 
 export function FlowBuilderModule() {
   const [isMobileView, isBuilderBlurred] = useApplicationState(s => [s.view.mobile, s.builder.blurred])
-
+  const storeTheme = useAppAppearanceStore(s=>s.theme);
   const [
     nodes,
     _,
@@ -98,7 +99,7 @@ export function FlowBuilderModule() {
   )
 
   return (
-    <div className="relative size-full">
+    <div className="relative size-full ">
       <ReactFlow
         proOptions={{ hideAttribution: true }}
         nodeTypes={NODE_TYPES}
@@ -118,18 +119,19 @@ export function FlowBuilderModule() {
         multiSelectionKeyCode={null}
         deleteKeyCode={deleteKeyCode}
         snapGrid={[16, 16]}
+        colorMode={storeTheme === 'light'? 'light': 'dark'}
         snapToGrid
         fitView
       >
-        <Background color={isMobileView ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.25)'} gap={32} />
+        <Background gap={32} />
         <CustomControls />
       </ReactFlow>
 
       <div
         className={cn(
           'pointer-events-none absolute inset-0 backdrop-blur-5 transition-all',
-          isBuilderBlurred && 'op-100 bg-dark-500/30 backdrop-saturate-80 pointer-events-auto',
-          !isBuilderBlurred && 'op-0 bg-dark-800/0 backdrop-saturate-100 pointer-events-none',
+          isBuilderBlurred && 'op-100  backdrop-saturate-80 pointer-events-auto',
+          !isBuilderBlurred && 'op-0  backdrop-saturate-100 pointer-events-none',
         )}
       >
         <div ref={floatingMenuWrapperRef} className="relative size-full">

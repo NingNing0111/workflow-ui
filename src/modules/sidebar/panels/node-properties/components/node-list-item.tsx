@@ -1,45 +1,105 @@
 import type { ComponentPropsWithoutRef } from 'react'
-
 import { isEmpty } from 'radash'
-
-import { cn } from '~@/utils/cn'
+import { Flex, Typography, theme, Tag } from 'antd'
 
 import { truncateMiddle } from '~/utils/string'
 
-type NodeListItemProps = Readonly<ComponentPropsWithoutRef<'button'> & {
-  icon: string;
-  title: string;
-  id?: string;
-  selected?: boolean;
-  pseudoSelected?: boolean;
-}>
+type NodeListItemProps = Readonly<
+  ComponentPropsWithoutRef<'div'> & {
+    icon: string
+    title: string
+    id?: string
+    selected?: boolean
+    pseudoSelected?: boolean
+  }
+>
 
-export function NodeListItem({ id, title, className, icon, selected, pseudoSelected, ...props }: NodeListItemProps) {
+export function NodeListItem({
+  id,
+  title,
+  icon,
+  selected,
+  pseudoSelected,
+  className,
+  ...props
+}: NodeListItemProps) {
+  const { token } = theme.useToken()
+
+  const background = selected
+    ? token.colorPrimaryBg
+    : pseudoSelected
+      ? token.colorFillSecondary
+      : 'transparent'
+
+  const borderColor = selected
+    ? token.colorPrimary
+    : 'transparent'
+
   return (
-    <button
-      type="button"
-      className={cn(
-        'h-8 select-none flex items-center justify-between gap-4 border border-transparent rounded-lg bg-transparent px-2.5 text-sm outline-none transition',
-        selected ? 'border-teal-700 bg-teal-900' : 'active:(bg-dark-400 border-dark-200) hover:(bg-dark-200)',
-        pseudoSelected && !selected && 'bg-dark-300/60',
-        className,
-      )}
+    <div
       {...props}
+      className={className}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        minHeight: 32,
+        paddingInline: token.paddingSM,
+        borderRadius: token.borderRadiusLG,
+        border: `1px solid ${borderColor}`,
+        background,
+        cursor: 'pointer',
+        userSelect: 'none',
+        transition: `
+          background-color .15s ease,
+          border-color .15s ease,
+          box-shadow .15s ease
+        `,
+      }}
     >
-      <div className="flex items-center">
-        <div className={cn(icon, 'size-4.5')} />
-        <div className="ml-2.5 flex items-center text-xs font-medium leading-none tracking-wide uppercase op-80">
-          <span className="translate-y-px">
-            {title}
-          </span>
-        </div>
-      </div>
+      {/* Left */}
+      <Flex align="center" gap={token.marginXS}>
+        <span
+          className={icon}
+          style={{
+            fontSize: 16,
+            color: selected
+              ? token.colorPrimary
+              : token.colorTextSecondary,
+          }}
+        />
 
+        <Typography.Text
+          style={{
+            fontSize: token.fontSizeSM,
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
+            color: token.colorText,
+            lineHeight: 1,
+          }}
+        >
+          {title}
+        </Typography.Text>
+      </Flex>
+
+      {/* Right */}
       {(id && !isEmpty(id)) && (
-        <div className="rounded-md bg-dark-100 px-2 py-1.5 text-2.5 text-gray-200/80 font-semibold leading-none tracking-wide">
+        <Tag
+          bordered={false}
+          style={{
+            background: token.colorFillTertiary,
+            color: token.colorTextSecondary,
+            fontSize: token.fontSizeSM - 2,
+            fontWeight: 600,
+            paddingInline: 6,
+            marginInlineEnd: 0,
+          }}
+        >
           {truncateMiddle(id, 12)}
-        </div>
+        </Tag>
       )}
-    </button>
+    </div>
   )
 }

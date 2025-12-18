@@ -1,3 +1,4 @@
+import { ApartmentOutlined } from "@ant-design/icons";
 import { useNodes, useReactFlow } from "@xyflow/react";
 import { produce } from "immer";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
@@ -11,7 +12,7 @@ import { trackSomethingInNodeProperties } from "~/utils/ga4";
 import { defaultOverlayScrollbarsOptions } from '~/utils/overlayscrollbars'
 const ExistNodesPanel = () => {
 
-    const {  selectedNode,  setSelectedNode } = useApplicationState(s => ({
+    const { selectedNode, setSelectedNode } = useApplicationState(s => ({
         paneSizes: s.sidebar.panels.nodeProperties.paneSizes,
         setPaneSizes: s.actions.sidebar.panels.nodeProperties.setPaneSizes,
         selectedNode: s.sidebar.panels.nodeProperties.selectedNode,
@@ -30,33 +31,33 @@ const ExistNodesPanel = () => {
 
         setSelectedNode({ id, type: nodeList.find(n => n.id === id)?.type as BuilderNode })
     }
-    return <SidebarPanelWrapper>
-        <div className="h-full flex flex-col">
-            <SidebarPanelHeading className="shrink-0">
-                <div className="i-mynaui:layers-three size-4.5" />
-                流程中的节点
-            </SidebarPanelHeading>
+    return (
+        <SidebarPanelWrapper>
+            <div className="h-full flex flex-col">
+                <SidebarPanelHeading icon={<ApartmentOutlined />} title="流程中的节点" />
+                <OverlayScrollbarsComponent className="grow" defer options={defaultOverlayScrollbarsOptions}>
+                    <div className="flex flex-col gap-1 p-1.5">
+                        {nodeList.map(node => (
+                            <NodeListItem
+                                key={node.id}
+                                id={node.type === BuilderNode.START || node.type === BuilderNode.END ? undefined : node.id}
+                                title={node.detail.title}
+                                icon={`${node.detail.icon} ${node.type === BuilderNode.START || node.type === BuilderNode.END ? 'scale-135' : ''}`}
+                                selected={selectedNode?.id === node.id}
+                                pseudoSelected={node.selected}
+                                onClick={() => {
+                                    trackSomethingInNodeProperties('view-node-properties')
+                                    onNodeClick(node.id)
+                                }}
+                            />
+                        ))}
+                    </div>
+                </OverlayScrollbarsComponent>
+            </div>
+        </SidebarPanelWrapper>
+    )
 
-            <OverlayScrollbarsComponent className="grow" defer options={defaultOverlayScrollbarsOptions}>
-                <div className="flex flex-col gap-1 p-1.5">
-                    {nodeList.map(node => (
-                        <NodeListItem
-                            key={node.id}
-                            id={node.type === BuilderNode.START || node.type === BuilderNode.END ? undefined : node.id}
-                            title={node.detail.title}
-                            icon={`${node.detail.icon} ${node.type === BuilderNode.START || node.type === BuilderNode.END ? 'scale-135' : ''}`}
-                            selected={selectedNode?.id === node.id}
-                            pseudoSelected={node.selected}
-                            onClick={() => {
-                                trackSomethingInNodeProperties('view-node-properties')
-                                onNodeClick(node.id)
-                            }}
-                        />
-                    ))}
-                </div>
-            </OverlayScrollbarsComponent>
-        </div>
-    </SidebarPanelWrapper>
+
 }
 
 export default ExistNodesPanel;

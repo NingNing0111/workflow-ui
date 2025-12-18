@@ -75,7 +75,7 @@ export default function AddNodeFloatingMenu({ onNodeAdd }: AddNodeFloatingMenuPr
       </Propover.Anchor>
       <Propover.Portal>
         <Propover.Content
-          className="isolate z-10 transform-origin-[var(--radix-popover-content-transform-origin)] data-[state=closed]:(animate-out fade-out zoom-out-90%) data-[state=open]:(animate-in zoom-in-95%) animate-duration-200 select-none overflow-clip border border-dark-300 rounded-xl bg-dark-300/40 shadow-2xl shadow-dark-900/30 backdrop-blur-2xl"
+          className="isolate z-10 transform-origin-[var(--radix-popover-content-transform-origin)] data-[state=closed]:(animate-out fade-out zoom-out-90%) data-[state=open]:(animate-in zoom-in-95%) animate-duration-200 select-none overflow-clip  rounded-xl  shadow-2xl  backdrop-blur-2xl"
           side="bottom"
           align="start"
           tabIndex={-1}
@@ -86,9 +86,7 @@ export default function AddNodeFloatingMenu({ onNodeAdd }: AddNodeFloatingMenuPr
         >
           <div tabIndex={-1} className="w-60 flex flex-col outline-none">
             <NodeList nodes={nodesWithMetadata.availableNodes} onNodeAdd={handleOnNodeAdd} />
-
-            <div className="my-0.5 h-px bg-dark-300" />
-
+            <div className="my-0.5 h-px " />
             <NodeList nodes={nodesWithMetadata.additionalNodes} onNodeAdd={handleOnNodeAdd} />
           </div>
         </Propover.Content>

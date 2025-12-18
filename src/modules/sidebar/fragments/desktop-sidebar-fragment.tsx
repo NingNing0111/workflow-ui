@@ -2,8 +2,9 @@ import type { ApplicationState } from '~/stores/application-state'
 
 import { useEffect, useRef } from 'react'
 
-import SidebarButtonItem from '~/modules/sidebar/components/sidebar-button-item'
 import { SwitchSidebarPanel } from '~/modules/sidebar/components/sidebar-switch-panel'
+import { Button, Divider, Layout, Space } from 'antd'
+import { ApartmentOutlined, BugOutlined, ProductOutlined, SettingOutlined } from '@ant-design/icons'
 
 type DesktopSidebarFragmentProps = Readonly<{
   isMobileView: ApplicationState['view']['mobile'];
@@ -80,79 +81,44 @@ export function DesktopSidebarFragment({ isMobileView, activePanel, setActivePan
   ])
 
 
+  const handleButtonClick = (activePanel: ApplicationState['sidebar']['active']) => {
+    setActivePanel(activePanel)
+    if (!showSidebar) {
+      toggleSidebar()
+    }
+  }
 
-  const availableNodesClick = useSidebarButtonClick(
-    'available-nodes',
-    activePanel,
-    showSidebar,
-    setActivePanel,
-    toggleSidebar,
-  )
 
-  const existNodesClick = useSidebarButtonClick(
-    'exist-nodes',
-    activePanel,
-    showSidebar,
-    setActivePanel,
-    toggleSidebar,
-  )
-
-  const nodePropsClick = useSidebarButtonClick(
-    'node-properties',
-    activePanel,
-    showSidebar,
-    setActivePanel,
-    toggleSidebar,
-  )
-
-  const onlineDebugClick = useSidebarButtonClick(
-    "online-debug",
-    activePanel,
-    showSidebar,
-    setActivePanel,
-    toggleSidebar,
-  )
+  const SiderbarButton = ({ icon, panelName }: { icon: React.ReactNode, panelName: ApplicationState['sidebar']['active'] }) => {
+    return <Button icon={icon} className={`${activePanel === panelName ? 'border-blue' : 'border-0'}`} onClick={() => handleButtonClick(panelName)} />
+  }
 
   return (
-    <div className="relative w-auto flex shrink-0 divide-x divide-dark-300">
+    <div className="relative flex w-12 justify-center border-0">
+      {/* 左侧 Panel（相对于 Space 展开） */}
       {activePanel !== 'none' && showSidebar && (
-        <div className="min-w-sm grow bg-dark-500">
+        <div
+          className="
+        absolute
+        right-full
+        top-0
+        min-w-sm
+        h-full
+      "
+        >
           <SwitchSidebarPanel active={activePanel} />
         </div>
       )}
 
-      <div className="shrink-0 bg-dark-400 p-1.5">
-        <div className="h-full flex flex-col gap-2">
-          <SidebarButtonItem
-            active={activePanel === 'available-nodes'}
-            {...availableNodesClick}
-          >
-            <div className="i-mynaui:grid size-5" />
-          </SidebarButtonItem>
-
-
-          <SidebarButtonItem
-            active={activePanel === 'exist-nodes'}
-            {...existNodesClick}
-          >
-            <div className="i-mynaui:package size-5" />
-          </SidebarButtonItem>
-
-          <SidebarButtonItem
-            active={activePanel === 'node-properties'}
-            {...nodePropsClick}
-          >
-            <div className="i-mynaui:layers-three size-5" />
-          </SidebarButtonItem>
-          <div className="mx-a h-px w-4 bg-dark-100" />
-          <SidebarButtonItem
-            active={activePanel === 'online-debug'}
-            {...onlineDebugClick}
-          >
-            <div className="i-mynaui:code-octagon size-5" />
-          </SidebarButtonItem>
-        </div>
-      </div>
+      {/* 右侧按钮列 */}
+      <Space orientation="vertical" size={8}>
+        <SiderbarButton icon={<ProductOutlined />} panelName='available-nodes' />
+        <SiderbarButton icon={<ApartmentOutlined />} panelName='exist-nodes' />
+        <SiderbarButton icon={<SettingOutlined />} panelName='node-properties' />
+        <Divider style={{ margin: '4px 0' }} />
+        <SiderbarButton icon={<BugOutlined />} panelName='online-debug' />
+      </Space>
     </div>
+
   )
 }

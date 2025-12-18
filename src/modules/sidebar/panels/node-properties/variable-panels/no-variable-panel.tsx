@@ -1,21 +1,53 @@
+import { Result, Typography, theme } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
+
 export default function NoVariablePanel() {
+  const { token } = theme.useToken()
+
   return (
-    <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-      <div className="size-12 flex items-center justify-center rounded-full bg-dark-300">
-        <div className="i-mynaui:info-triangle size-6 text-white" />
-      </div>
-
-      <div className="mt-4 text-balance font-medium">
-        无可用的变量
-      </div>
-
-      <div className="mt-1 w-2.5/3 text-xs text-light-50/40 font-medium leading-normal">
-        该节点不允许使用变量，或该节点未被选中。
-      </div>
-
-      <div className="mt-8 w-full text-xs text-light-50/40 font-medium italic">
-        选择另一个节点以查看其变量。
-      </div>
-    </div>
+    <Result
+      icon={
+        <InfoCircleOutlined
+            style={{
+              fontSize: 28,
+              color: token.colorTextSecondary,
+            }}
+          />
+      }
+      title={
+        <Typography.Text
+          style={{
+            fontWeight: 500,
+            color: token.colorText,
+          }}
+        >
+          无可用的变量
+        </Typography.Text>
+      }
+      subTitle={
+        <Typography.Text
+          type="secondary"
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            maxWidth: 260,
+            display: 'inline-block',
+          }}
+        >
+          该节点不允许使用变量，或该节点未被选中。
+        </Typography.Text>
+      }
+      extra={
+        <Typography.Text
+          type="secondary"
+          italic
+          style={{
+            fontSize: 12,
+          }}
+        >
+          选择另一个节点以查看其变量。
+        </Typography.Text>
+      }
+    />
   )
 }

@@ -11,6 +11,8 @@ import { BuilderNode } from '~/modules/nodes/types'
 import { getNodeDetail } from '~/modules/nodes/utils'
 import UnavailableNodePropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/unavailable-property-panel'
 import { useApplicationState } from '~/stores/application-state'
+import { theme, Typography } from 'antd'
+import clsx from 'clsx'
 
 export interface EndNodeData {
 }
@@ -27,21 +29,54 @@ export function EndNode({ id, data, selected, isConnectable }: EndNodeProps) {
   const showNodeProperties = useCallback(() => {
     showNodePropertiesOf({ id, type: NODE_TYPE })
   }, [id, showNodePropertiesOf])
-
+const { token } = theme.useToken()
   return (
     <>
       <div
-        data-selected={selected}
-        data-deletable={false}
-        className="flex items-center border border-dark-100 rounded-full bg-dark-300 px-4 py-2 shadow-sm transition data-[selected=true]:(border-purple-600 ring-1 ring-purple-600/50)"
-        
         onDoubleClick={showNodeProperties}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: '6px 14px',
+          borderRadius: 999,
+          border: `1px solid ${selected ? token.colorPrimary : token.colorBorder
+            }`,
+          background: token.colorBgContainer,
+          boxShadow: token.boxShadowSecondary,
+          cursor: 'default',
+          transition: 'all 0.2s',
+          ...(selected
+            ? {
+              boxShadow: `0 0 0 2px ${token.colorPrimaryBorder}`,
+            }
+            : {}),
+        }}
       >
-        <div className={cn(meta.icon, 'size-4.5 shrink-0 mr-2 scale-130')} />
+        {/* 图标 */}
+        <div
+          className={clsx(meta.icon)}
+          style={{
+            width: 18,
+            height: 18,
+            marginRight: 8,
+            transform: 'scale(1.3)',
+            color: token.colorTextSecondary,
+            flexShrink: 0,
+          }}
+        />
 
-        <span className="mr-1">
+        {/* 标题 */}
+        <Typography.Text
+          ellipsis
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: token.colorText,
+            userSelect: 'none',
+          }}
+        >
           {data.label || meta.title}
-        </span>
+        </Typography.Text>
       </div>
 
       <CustomHandle

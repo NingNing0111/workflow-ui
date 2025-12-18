@@ -1,3 +1,4 @@
+import { ControlOutlined, FunctionOutlined } from '@ant-design/icons'
 import { useNodes, } from '@xyflow/react'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import {  useMemo } from 'react'
@@ -33,13 +34,9 @@ export function NodePropertiesPanel() {
         onChange={setPaneSizes}
         split="horizontal"
       >
-
         <Pane minSize={80}>
           <div className="h-full flex flex-col">
-            <SidebarPanelHeading className="shrink-0">
-              <div className="i-mynaui:code-diamond size-4.5" />
-              变量信息
-            </SidebarPanelHeading>
+            <SidebarPanelHeading icon={<FunctionOutlined/>} title='变量信息' />
             <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
               {selectedNode && selectedNode.type !== 'end' ? <NodeVariablePropertiesPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} /> : <NoVariablePanel />}
             </OverlayScrollbarsComponent>
@@ -50,11 +47,8 @@ export function NodePropertiesPanel() {
 
         <Pane minSize={200}>
           <div className="h-full flex flex-col">
-            <SidebarPanelHeading className="shrink-0">
-              <div className="i-mynaui:cog size-4.5" />
-              节点属性
+            <SidebarPanelHeading icon={<ControlOutlined />} title='节点属性'>
             </SidebarPanelHeading>
-
             <OverlayScrollbarsComponent className="grow" defer options={defaultOverlayScrollbarsOptions}>
               {selectedNode
                 ? <NodePropertyPanel id={selectedNode.id} type={selectedNode.type} data={selectedNodeData} />
@@ -62,13 +56,7 @@ export function NodePropertiesPanel() {
             </OverlayScrollbarsComponent>
           </div>
         </Pane>
-
-
-        
       </SplitPane>
-
-
-
     </SidebarPanelWrapper>
   )
 }

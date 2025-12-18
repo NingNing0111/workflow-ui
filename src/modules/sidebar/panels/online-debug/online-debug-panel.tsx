@@ -1,4 +1,4 @@
-import { AntDesignOutlined, UserOutlined } from "@ant-design/icons";
+import { AntDesignOutlined, BugOutlined, CodeOutlined, UserOutlined } from "@ant-design/icons";
 import { Bubble, type BubbleListProps, type BubbleProps } from "@ant-design/x";
 import XMarkdown from "@ant-design/x-markdown";
 import { useNodesData, useReactFlow } from "@xyflow/react";
@@ -28,17 +28,17 @@ type StartNodeData = {
 };
 
 const renderMarkdown: BubbleProps['contentRender'] = (content) => {
-  return (
-    <Typography>
-      <XMarkdown content={content} />
-    </Typography>
-  );
+    return (
+        <Typography>
+            <XMarkdown content={content} />
+        </Typography>
+    );
 };
 
 const OnlineDebugPanel = () => {
     const { getNodes, getEdges } = useReactFlow();
     const nodeData = useNodesData(DEFAULT_START_ID);
-const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
+    const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [sizes, setSizes] = useState<number[]>([320, 180]);
     const [userInputs, setUserInputs] = useState<NodeIOData[]>([]);
@@ -78,7 +78,7 @@ const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
 
                 if (event.data.output) {
                     const text = event.data.output;
-                    debugBubbleListRef.current?.scrollTo({top: "bottom", behavior: 'smooth'})
+                    debugBubbleListRef.current?.scrollTo({ top: "bottom", behavior: 'smooth' })
                     setMessages((prev) => {
                         const lastIndex = prev.findIndex((m) => m.role === "assistant" && m.key === aiMessage.key);
                         if (lastIndex === -1) return prev;
@@ -118,7 +118,7 @@ const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
     );
 
     return (
-        <SidebarPanelWrapper className="flex flex-col h-full">
+        <SidebarPanelWrapper>
             <SplitPane
                 split="horizontal"
                 sizes={sizes}
@@ -129,13 +129,10 @@ const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
                 )}
             >
                 {/* 消息区 */}
-                <Pane minSize={120}>
+                <Pane minSize={80}>
 
                     <div className="h-full flex flex-col">
-                        <SidebarPanelHeading className="shrink-0">
-                            <div className="i-mynaui:code-diamond size-4.5" />
-                            调试台
-                        </SidebarPanelHeading>
+                        <SidebarPanelHeading icon={<BugOutlined />} title="调试台" />
                         <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
                             {messages.length > 0 ? (
                                 <Bubble.List
@@ -154,11 +151,8 @@ const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
                 </Pane>
 
                 {/* 输入区 */}
-                <Pane minSize={80}>
-                    <SidebarPanelHeading className="shrink-0">
-                        <div className="i-mynaui:code-diamond size-4.5" />
-                        输入参数
-                    </SidebarPanelHeading>
+                <Pane minSize={180}>
+                    <SidebarPanelHeading title="输入参数" icon={<CodeOutlined />} />
                     <OverlayScrollbarsComponent>
                         <div className="py-5">
                             <DynamicInputForm

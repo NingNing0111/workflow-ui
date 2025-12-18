@@ -1,4 +1,5 @@
 import { TextArea } from "@radix-ui/themes";
+import { Dropdown, Empty, Menu, theme, type MenuProps } from "antd";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebounce } from "~/modules/flow-builder/hooks/useDebounce";
 import { InputTypeEnum, type InputType, type NodeIOData, type NodeParamRefData } from "~/modules/nodes/types";
@@ -35,7 +36,7 @@ export default function VariableInput({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const mirrorRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const { token } = theme.useToken()
   // 使用防抖减少频繁更新
   const debouncedValue = useDebounce(value, 300);
 
@@ -245,42 +246,45 @@ export default function VariableInput({
 
   // ===== 位置计算优化 =====
   const updateDropdownPosition = useCallback((pos: number) => {
-    if (!inputRef.current || !mirrorRef.current) return;
-
-    const textBeforeCursor = value.slice(0, pos);
+    const input = inputRef.current;
     const mirror = mirrorRef.current;
+    if (!input || !mirror) return;
 
-    mirror.textContent = textBeforeCursor || " ";
-    const span = document.createElement("span");
-    span.textContent = "\u200b";
-    mirror.appendChild(span);
+    // 1️⃣ 复制文本
+    mirror.textContent = value.slice(0, pos);
 
-    const rect = span.getBoundingClientRect();
-    const inputRect = inputRef.current.getBoundingClientRect();
+    // 2️⃣ 光标占位 span
+    const cursorSpan = document.createElement('span');
+    cursorSpan.textContent = '\u200b';
+    mirror.appendChild(cursorSpan);
 
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    const dropdownHeight = Math.min(filteredVariables.length * 32 + 60, 200);
-    const dropdownWidth = 264;
+    // 3️⃣ 获取 span 的 viewport 坐标
+    const spanRect = cursorSpan.getBoundingClientRect();
 
-    let top = rect.bottom - inputRect.top;
-    let left = rect.left - inputRect.left;
+    // 4️⃣ 清理
+    mirror.removeChild(cursorSpan);
 
-    const verticalOffset = 12;
-    top += verticalOffset;
+    const dropdownWidth = 260;
+    const dropdownHeight = Math.min(filteredVariables.length * 32 + 80, 260);
+    const gap = 8;
 
-    if (top + dropdownHeight > viewportHeight - inputRect.top) {
-      top = rect.top - inputRect.top - dropdownHeight - verticalOffset;
+    let top = spanRect.bottom + gap;
+    let left = spanRect.left;
+
+    // 5️⃣ 自动翻转（到底部不够空间）
+    if (top + dropdownHeight > window.innerHeight) {
+      top = spanRect.top - dropdownHeight - gap;
     }
 
-    if (left + dropdownWidth > viewportWidth - inputRect.left) {
-      left = Math.max(8, inputRect.width - dropdownWidth - 8);
+    // 6️⃣ 右侧溢出处理
+    if (left + dropdownWidth > window.innerWidth) {
+      left = window.innerWidth - dropdownWidth - 8;
     }
 
-    top = Math.max(8, top);
-    left = Math.max(8, left);
-
-    setDropdownPosition({ top, left });
+    setDropdownPosition({
+      top: Math.max(8, top),
+      left: Math.max(8, left),
+    });
   }, [value, filteredVariables.length]);
 
   // ===== 点击外部关闭优化 =====
@@ -303,118 +307,198 @@ export default function VariableInput({
 
   // ===== 滚动时重新定位 =====
   useEffect(() => {
-    if (showDropdown) {
-      updateDropdownPosition(cursorPos);
-    }
-  }, [showDropdown, filteredVariables.length, cursorPos, updateDropdownPosition]);
+    if (!showDropdown) return;
+    updateDropdownPosition(cursorPos);
+
+    const handleScroll = () => updateDropdownPosition(cursorPos);
+    window.addEventListener('scroll', handleScroll, true);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [showDropdown, cursorPos, updateDropdownPosition]);
+
+  const menuItems: MenuProps['items'] =
+    filteredVariables.length > 0
+      ? filteredVariables.map((variable, index) => ({
+        key: `${variable.nodeId}-${variable.name}`,
+        label: (
+          <div
+            onMouseEnter={() => setHighlightIndex(index)}
+            style={{
+              padding: '4px 0',
+              color: token.colorTextBase,
+            }}
+          >
+            <div style={{ fontWeight: 500, color: token.colorText }}>
+              {variable.label}
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: 12,
+                opacity: 0.65,
+                marginTop: 4,
+                color: token.colorText
+              }}
+            >
+              <span>{variable.nodeId}</span>
+              <span>{variable.name}</span>
+            </div>
+
+            {highlightIndex === index && (
+              <div
+                style={{
+                  fontSize: 12,
+                  color: token.colorPrimary,
+                  marginTop: 4,
+                }}
+              >
+                将插入: {'{'}
+                {variable.fullPath}
+                {'}'}
+              </div>
+            )}
+          </div>
+        ),
+        onMouseDown: (e: any) => {
+          e.domEvent.preventDefault()
+          insertVariable(variable)
+        },
+      }))
+      : [
+        {
+          key: 'empty',
+          disabled: true,
+          label: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="未找到匹配的变量"
+            />
+          ),
+        },
+      ]
+  const mirrorStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    visibility: 'hidden',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    pointerEvents: 'none',
+    opacity: 0,
+
+    fontSize: 14,
+    fontFamily: 'inherit',
+    lineHeight: '1.5',
+
+    padding: '8px 12px',
+    boxSizing: 'border-box',
+
+    width: inputRef.current
+      ? `${inputRef.current.clientWidth}px`
+      : '100%',
+  };
 
   return (
-    <div className="relative w-full">
+    <div style={{ position: 'relative', width: '100%' }}>
       {/* ===== 文本输入框 ===== */}
-      <div className="relative">
-        <TextArea
-          ref={inputRef}
-          className="w-full  !p-2 !rounded-lg !text-gray-300 bg-gray-800 border border-gray-600 text-sm shadow-sm outline-none duration-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          radius="large"
-          value={value}
-          onChange={handleInput}
-          onKeyDown={handleKeyDown}
-          onClick={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            setCursorPos(target.selectionStart);
-          }}
-          onSelect={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            setCursorPos(target.selectionStart);
-          }}
-          rows={row}
-          placeholder={placeholder}
-        />
-        <style>{`
-          textarea::placeholder {
-            color: #6b7280 !important;
-            font-size: 0.875rem !important;
-          }
-        `}</style>
-      </div>
-
-      {/* ===== 镜像元素（用于位置计算） ===== */}
-      <div
-        ref={mirrorRef}
-        className="absolute top-0 left-0 invisible whitespace-pre-wrap break-words pointer-events-none opacity-0"
+      <TextArea
+        ref={inputRef}
+        value={value}
+        rows={row}
+        placeholder={placeholder}
+        onChange={handleInput}
+        onKeyDown={handleKeyDown}
+        onClick={(e) => {
+          const target = e.target as HTMLTextAreaElement
+          setCursorPos(target.selectionStart)
+        }}
+        onSelect={(e) => {
+          const target = e.target as HTMLTextAreaElement
+          setCursorPos(target.selectionStart)
+        }}
         style={{
-          fontSize: "14px",
-          fontFamily: "inherit",
-          lineHeight: "1.5",
-          padding: "0.5rem",
-          width: "100%",
-          minHeight: "100%",
-          border: "1px solid transparent",
-          boxSizing: "border-box",
+          fontSize: 14,
+          color: token.colorText,
+          padding: 8,
+          borderRadius: 8
         }}
       />
 
+      {/* ===== 镜像元素（用于光标定位计算） ===== */}
+      <div
+        ref={mirrorRef}
+        style={mirrorStyle}
+      />
+
       {/* ===== 变量下拉列表 ===== */}
-      {showDropdown && (
-        <div
-          ref={dropdownRef}
-          className="absolute bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 w-64 max-h-60 overflow-auto backdrop-blur-sm"
-          style={{
-            top: `${dropdownPosition.top}px`,
-            left: `${dropdownPosition.left}px`,
-          }}
-        >
-          {/* 搜索状态显示 */}
-          {searchTerm && (
-            <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700 bg-gray-750">
-              搜索: "{searchTerm}"
-              <span className="float-right text-gray-300">
-                {filteredVariables.length} 个变量
-              </span>
-            </div>
-          )}
-
-          {/* 变量列表 */}
-          {filteredVariables.length > 0 ? (
-            filteredVariables.map((variable, index) => (
+      <Dropdown
+        open={showDropdown}
+        trigger={[]}
+        styles={{
+          root: {
+            position: 'fixed',
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+            width: 260,
+          },
+        }}
+        popupRender={() => (
+          <div
+            ref={dropdownRef}
+            style={{
+              background: token.colorBgElevated,
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              boxShadow: token.boxShadowSecondary,
+              overflow: 'hidden',
+            }}
+          >
+            {/* 搜索状态 */}
+            {searchTerm && (
               <div
-                key={`${variable.nodeId}-${variable.name}`}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  insertVariable(variable);
+                style={{
+                  padding: '6px 12px',
+                  fontSize: 12,
+                  color: token.colorTextSecondary,
+                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
                 }}
-                onMouseEnter={() => setHighlightIndex(index)}
-                className={`px-3 py-2 text-sm cursor-pointer transition-colors duration-150 ${highlightIndex === index
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-200 hover:bg-gray-700"
-                  }`}
               >
-                <div className="flex flex-col">
-                  <span className="font-medium">{variable.label}</span>
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>{variable.nodeId}</span>
-                    <span>{variable.name}</span>
-                  </div>
-                </div>
-                {highlightIndex === index && (
-                  <div className="text-xs text-blue-200 mt-1">
-                    将插入: {"{"}{variable.fullPath}{"}"}
-                  </div>
-                )}
+                搜索: "{searchTerm}"
+                <span style={{ float: 'right' }}>
+                  {filteredVariables.length} 个变量
+                </span>
               </div>
-            ))
-          ) : (
-            <div className="px-3 py-4 text-sm text-gray-400 text-center">
-              未找到匹配的变量
-            </div>
-          )}
+            )}
 
-          {/* 快捷键提示 */}
-          <div className="px-3 py-2 text-xs text-gray-400 border-t border-gray-700 bg-gray-750">
-            ↑↓ 导航 • Enter/Tab 选择 • Esc 关闭
+            {/* 变量列表 */}
+            <div style={{ maxHeight: 240, overflow: 'auto' }}>
+              <Menu
+                items={menuItems}
+                selectable={false}
+                style={{
+                  background: 'transparent', // 重要：让 Menu 用容器背景
+                }}
+              />
+            </div>
+
+            {/* 快捷键提示 */}
+            <div
+              style={{
+                padding: '6px 12px',
+                fontSize: 12,
+                color: token.colorTextSecondary,
+                borderTop: `1px solid ${token.colorBorderSecondary}`,
+              }}
+            >
+              ↑↓ 导航 • Enter / Tab 选择 • Esc 关闭
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      />
     </div>
   );
 }

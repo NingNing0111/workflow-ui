@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ReactFlowProvider } from '@xyflow/react'
+import { Layout } from 'antd'
 import { useEffect } from 'react'
 
 import { FlowBuilderModule } from '~/modules/flow-builder/flow-builder-module'
@@ -14,26 +15,25 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
 
-  useEffect(()=>{
+  useEffect(() => {
     // createWorkflow({title: "工作流测试", description: "开发测试工作流"})
-  },[])
+  }, [])
   return (
-    <ReactFlowProvider>
-      <div className="flex flex-col text-light-50 h-dvh divide-y divide-dark-300">
+    <Layout >
+      <ReactFlowProvider >
         <NavigationBarModule />
-
-        <div className="flex grow of-y-hidden divide-x divide-dark-300">
-          <div className="grow bg-dark-500 <md:(bg-dark-700)">
-            <AddNodeOnEdgeDropStateProvider>
-              <FlowBuilderModule />
-            </AddNodeOnEdgeDropStateProvider>
+        <div className="flex flex-col h-dvh divide-y ">
+          <div className="flex grow of-y-hidden ">
+            <div className="grow ">
+              <AddNodeOnEdgeDropStateProvider>
+                <FlowBuilderModule />
+              </AddNodeOnEdgeDropStateProvider>
+            </div>
+            <SidebarModule />
           </div>
-
-          <SidebarModule />
         </div>
-      </div>
+      </ReactFlowProvider>
+    </Layout>
 
-      <ToasterModule />
-    </ReactFlowProvider>
   )
 }

@@ -1,5 +1,6 @@
 import type { ReactFlowState } from '@xyflow/react'
 import { Controls, useReactFlow, useStore } from '@xyflow/react'
+import { Button } from 'antd'
 import { shallow } from 'zustand/shallow'
 
 import CustomControlButton from '~/modules/flow-builder/components/controls/custom-control-button'
@@ -25,19 +26,15 @@ export default function CustomControls() {
       showFitView={false}
       showZoom={false}
       showInteractive={false}
-      position={!isMobile ? 'bottom-left' : 'top-right'}
+      position={'bottom-left'}
+      style={{bottom: 30}}
     >
-      <CustomControlButton onClick={() => zoomIn({ duration: ZOOM_DURATION })} disabled={maxZoomReached}>
-        <div className="i-mynaui:plus size-5" />
-      </CustomControlButton>
-
-      <CustomControlButton onClick={() => zoomOut({ duration: ZOOM_DURATION })} disabled={minZoomReached}>
-        <div className="i-mynaui:minus size-5" />
-      </CustomControlButton>
-
-      <CustomControlButton onClick={() => fitView({ duration: ZOOM_DURATION })}>
-        <div className="i-mynaui:maximize size-4" />
-      </CustomControlButton>
+      <Button icon={<div className="i-mynaui:plus size-5" />} size='small' onClick={() => zoomIn({ duration: ZOOM_DURATION })} disabled={maxZoomReached}>
+      </Button>
+      <Button icon={<div className="i-mynaui:minus size-5" />} size='small' onClick={() => zoomOut({ duration: ZOOM_DURATION })} disabled={minZoomReached}>
+      </Button>
+      <Button icon={<div className="i-mynaui:maximize size-4" />} size='small' onClick={() => fitView({ duration: ZOOM_DURATION })}>
+      </Button>
     </Controls>
   )
 }

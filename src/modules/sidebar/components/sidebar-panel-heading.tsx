@@ -1,13 +1,39 @@
-import type { ComponentPropsWithoutRef } from 'react'
+import { Typography, Flex, theme } from 'antd'
 
-import { cn } from '~@/utils/cn'
+type SidebarPanelHeadingProps = {
+  icon: React.ReactNode
+  title: string
+}
 
-type SidebarPanelHeadingProps = Readonly<ComponentPropsWithoutRef<'div'>>
+export default function SidebarPanelHeading({
+  icon,
+  title,
+}: SidebarPanelHeadingProps) {
+  const { token } = theme.useToken()
 
-export default function SidebarPanelHeading({ children, className, ...props }: SidebarPanelHeadingProps) {
   return (
-    <div className={cn('flex items-center text-sm h-10 leading-none px-4 border-b select-none shrink-0 border-dark-300 bg-dark-400/80 text-center text-light-100/60 gap-x-2 font-semibold', className)} {...props}>
-      {children}
-    </div>
+    <Flex
+      align="center"
+      gap={8}
+      style={{
+        padding: `${token.paddingSM}px ${token.padding}px`,
+        borderBottom: `1px solid ${token.colorSplit}`,
+      }}
+    >
+      <span
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          color: token.colorTextSecondary,
+          fontSize: token.fontSizeLG,
+        }}
+      >
+        {icon}
+      </span>
+
+      <Typography.Text strong>
+        {title}
+      </Typography.Text>
+    </Flex>
   )
 }

@@ -1,7 +1,10 @@
+import { ProductOutlined } from '@ant-design/icons'
+import { Typography } from 'antd'
 import { useInsertNode } from '~/modules/flow-builder/hooks/use-insert-node'
 import { AVAILABLE_NODES } from '~/modules/nodes'
 import SidebarPanelWrapper from '~/modules/sidebar/components/sidebar-panel-wrapper'
 import { NodePreviewDraggable } from '~/modules/sidebar/panels/available-nodes/components/node-preview-draggable'
+import { useAppAppearanceStore } from '~/stores/appearanceStore'
 import { useApplicationState } from '~/stores/application-state'
 
 export default function AvailableNodesPanel() {
@@ -10,19 +13,17 @@ export default function AvailableNodesPanel() {
     setActivePanel: s.actions.sidebar.setActivePanel,
   }))
   const insertNode = useInsertNode()
+  const isDark = useAppAppearanceStore(s => s.theme === 'dark')
 
   return (
-    <SidebarPanelWrapper>
+    <SidebarPanelWrapper >
       <div className="mt-4 flex flex-col items-center p-4 text-center">
-        <div className="size-12 flex items-center justify-center rounded-full bg-teal-800">
-          <div className="i-mynaui:grid size-6 text-white" />
+        <div className={`text-10 ${isDark ? 'text-white' : 'text-black'} `}>
+          <ProductOutlined />
         </div>
+        <Typography.Text> 可用节点</Typography.Text>
+        <Typography.Text> 拖放节点来构建您的工作流程中</Typography.Text>
 
-        <div className="mt-4 text-balance font-medium">可用节点</div>
-
-        <div className="mt-1 w-2/3 text-xs text-light-50/40 font-medium leading-normal">
-          {isMobileView ? '点击节点即可将其添加到流程中。' : '拖放节点来构建您的工作流程中。'}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 p-4">

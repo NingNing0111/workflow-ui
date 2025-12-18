@@ -7,6 +7,7 @@ import { Whenever } from '~@/components/generics/whenever'
 import { unheadInstance } from '~@/unhead'
 import { useApplicationState } from '~/stores/application-state'
 import { ConfigProvider, theme } from 'antd'
+import { useAppAppearanceStore } from '~/stores/appearanceStore'
 
 const TanStackRouterDevtools = import.meta.env.PROD ? () => null : lazy(() => import('@tanstack/router-devtools').then(res => ({ default: res.TanStackRouterDevtools })))
 
@@ -28,18 +29,18 @@ function RootLayout() {
   useEffect(() => {
     setMobileView(isMobile)
   }, [isMobile]) // eslint-disable-line react-hooks/exhaustive-deps
-
+  const isDark = useAppAppearanceStore(s => s.theme === 'dark');
   return (
     <>
       <ConfigProvider theme={{
-        algorithm: theme.darkAlgorithm
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}>
         <Outlet />
-      <Whenever condition={isProduction}>
-        <Suspense>
-          <TanStackRouterDevtools />
-        </Suspense>
-      </Whenever>
+        <Whenever condition={isProduction}>
+          <Suspense>
+            <TanStackRouterDevtools />
+          </Suspense>
+        </Whenever>
       </ConfigProvider>
     </>
   )
