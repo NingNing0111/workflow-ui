@@ -6,11 +6,13 @@ export const DEFAULT_END_ID = "END";
 export enum BuilderNode {
   START = 'start', // 开始节点
   END = 'end', // 结束节点
-  USER_INPUT = 'userInput', // 用户输入
-  LLM_OUTPUT = 'llmOutput', // 大模型输出
+  QUESTION_CLASSIFIER = "questionClassifier", // 问题分类器
   PROMPT_SELECTOR = 'promptSelector', // 提示词选择器
+  LLM_OUTPUT = 'llmOutput', // 大模型输出
   CONDITIONAL_PATH = 'conditionalPath', // 分支判断节点
 }
+
+export type NodeTypes = typeof BuilderNode[keyof typeof BuilderNode];
 
 export type BuilderNodeType = `${BuilderNode}`
 

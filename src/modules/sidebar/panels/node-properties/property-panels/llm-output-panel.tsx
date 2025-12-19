@@ -1,12 +1,9 @@
 import { Divider, Input, InputNumber, Space, Switch, Typography } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNodePathPreOutputData } from '~/modules/flow-builder/hooks/use-node-path';
 import type { LLMOutputNodeData } from '~/modules/nodes/nodes/llm-output-node/llm-output.node';
 import { type BaseNodeData, type BuilderNodeType } from '~/modules/nodes/types'
 import VariableInput from '~/modules/sidebar/panels/node-properties/components/variable-input';
-
-import { cn } from '~@/utils/cn'
-
 
 type LLMOutputNodePropertyPanelProps = Readonly<{
     id: string;
@@ -20,6 +17,9 @@ export default function LLMOutputNodePropertyPanel({ id, data, updateData }: LLM
     const [llmOutputConfig, setLLMOutputConfig] = useState<LLMOutputNodeData>(data.nodeConfig);
     const variableData: any = useNodePathPreOutputData(id);
 
+    useEffect(() => {
+        setLLMOutputConfig(data.nodeConfig)
+    }, [data.nodeConfig])
     return (
         <Space
             orientation="vertical"

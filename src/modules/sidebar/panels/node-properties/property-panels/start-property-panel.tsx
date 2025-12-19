@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { UserInputNodeData } from '~/modules/nodes/nodes/user-input-node/user-input.node'
 import {
     type NodeIOData,
     type BaseNodeData,
@@ -21,6 +20,10 @@ import {
     theme,
 } from 'antd'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+
+export interface UserInputNodeData {
+    userInputs: NodeIOData[]
+}
 
 type StartNodePropertyPanelProps = Readonly<{
     id: string

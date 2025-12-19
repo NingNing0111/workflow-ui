@@ -12,11 +12,9 @@ import { useApplicationState } from '~/stores/application-state'
 import StartPropertyPanel from '~/modules/sidebar/panels/node-properties/property-panels/start-property-panel'
 import { theme, Typography } from 'antd'
 import clsx from 'clsx'
-import { useDebugStore } from '~/stores/debug-state'
 
 export interface StartNodeData {
   userInputs: NodeIOData[]
-
 }
 
 const NODE_TYPE = BuilderNode.START

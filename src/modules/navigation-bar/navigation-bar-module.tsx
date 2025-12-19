@@ -25,11 +25,15 @@ export function NavigationBarModule() {
   const submitApp = () => {
     const nodes = getNodes();
     const edges = getEdges();
-    updateWorkflow({
-      workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
-      nodes: nodes,
-      edges: edges
-    })
+    console.log(nodes);
+    console.log(edges);
+    
+    
+    // updateWorkflow({
+    //   workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
+    //   nodes: nodes,
+    //   edges: edges
+    // })
   }
 
   const runApp = () => {

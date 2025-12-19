@@ -1,5 +1,4 @@
-import { TextArea } from "@radix-ui/themes";
-import { Dropdown, Empty, Menu, theme, type MenuProps } from "antd";
+import { Dropdown, Empty, Input, Menu, theme, type MenuProps } from "antd";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebounce } from "~/modules/flow-builder/hooks/useDebounce";
 import { InputTypeEnum, type InputType, type NodeIOData, type NodeParamRefData } from "~/modules/nodes/types";
@@ -405,10 +404,11 @@ export default function VariableInput({
   return (
     <div style={{ position: 'relative', width: '100%' }}>
       {/* ===== 文本输入框 ===== */}
-      <TextArea
+      <Input.TextArea
         ref={inputRef}
         value={value}
-        rows={row}
+        autoSize={{minRows: row, maxRows: row + 3}}
+        maxLength={50}
         placeholder={placeholder}
         onChange={handleInput}
         onKeyDown={handleKeyDown}

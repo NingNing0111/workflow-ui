@@ -36,7 +36,7 @@ export const useAllPathsToNode = (targetNodeId: string) => {
                     ...currentNode.data,
                     id: currentNode.id,
                     type: currentNode.type,
-                    title: getNodeDetail(currentNode.type).title,
+                    title: getNodeDetail(currentNode.type as any).title,
                 },
             ];
 

@@ -1,11 +1,11 @@
 import type { Node } from '@xyflow/react'
 
-import type { BuilderNode, BuilderNodeType } from '~/modules/nodes/types'
+import type { BuilderNode, BuilderNodeType, NodeTypes } from '~/modules/nodes/types'
 import { nanoid } from 'nanoid'
 
 import { NODES } from '~/modules/nodes'
 
-export function getNodeDetail(nodeType: BuilderNodeType | string | undefined) {
+export function getNodeDetail(nodeType: NodeTypes) {
   const node = NODES.find(node => node.type === nodeType)
   if (!node) { throw new Error(`Node type "${nodeType}" not found`) }
 
