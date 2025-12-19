@@ -81,7 +81,7 @@ export const metadata: RegisterNodeMetadata<BaseNodeData<QuestionClassifierNodeD
         outputs: 0,
     },
     defaultData: {
-        label: '大模型输出',
+        label: '问题分类器',
         inputConfig: {
             refInputs: []
         },
