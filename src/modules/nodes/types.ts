@@ -65,17 +65,23 @@ export const InputTypeOptions = [
   {
     label: "文本",
     icon: 'i-mynaui:type-text',
-    value: 1
+    value: 1,
+    name: "string",
+    color: 'blue'
   },
   {
     label: '数字',
     icon: 'i-mynaui:math',
-    value: 2
+    value: 2,
+    name: "number",
+    color: 'green'
   },
   {
     label: '复选框',
     icon: 'i-mynaui:check-square',
-    value: 3
+    value: 3,
+    name: "boolean",
+    color: 'red'
   }
 ]
 
@@ -85,12 +91,16 @@ export const InputTypeEnum = {
   BOOLEAN: 3
 }
 
+export type InputTypeNumer = 1 | 2 | 3;
+
 export type InputType = "text" | "number" | "boolean" | "none"
 
 export const GetInputType = (value: number) => {
   return InputTypeOptions.find(item => item.value === value) || {
     label: '未知类型',
     icon: 'i-mynaui:dot',
-    value: 0
+    value: 0,
+    name: '-',
+    color: 'default'
   }
 }

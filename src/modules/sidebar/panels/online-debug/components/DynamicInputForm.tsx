@@ -5,9 +5,10 @@ import { InputTypeEnum, type NodeIOData } from "~/modules/nodes/types";
 type Props = {
   userInputs: NodeIOData[];
   onSubmit?: (values: Record<string, unknown>) => void;
+  disabled?: boolean
 };
 
-export function DynamicInputForm({ userInputs, onSubmit }: Props) {
+export function DynamicInputForm({ userInputs, onSubmit, disabled }: Props) {
   const [form] = Form.useForm();
 
   const formItems = useMemo(() => {
@@ -71,7 +72,7 @@ export function DynamicInputForm({ userInputs, onSubmit }: Props) {
       >
         {formItems}
         <Form.Item>
-          <Button htmlType="submit" block>
+          <Button disabled={disabled} htmlType="submit" block>
             调试
           </Button>
         </Form.Item>

@@ -11,6 +11,8 @@ import { useNodePathPreOutputData } from '~/modules/flow-builder/hooks/use-node-
 import {
   Alert,
   Card,
+  Collapse,
+  Empty,
   Space,
   Tag,
   Tooltip,
@@ -18,6 +20,9 @@ import {
   theme,
 } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
+import OutputVariableDisplay from '~/modules/sidebar/components/variable-display/output-variable-display'
+import { useReactFlow } from '@xyflow/react'
+import InputVariableDisplay from '~/modules/sidebar/components/variable-display/input-variable-display'
 
 type NodeVariablePanelProps = Readonly<{
   id: string
@@ -27,8 +32,9 @@ type NodeVariablePanelProps = Readonly<{
 
 const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps) => {
   const { token } = theme.useToken()
+  const { getNode } = useReactFlow();
 
-  const nodeData: any = produce(data, () => {})
+  const nodeData: any = produce(data, () => { })
   const preVariable = useNodePathPreOutputData(id)
 
   const [refInputs, setRefInputs] = useState<NodeParamRefData[]>([])
@@ -38,156 +44,76 @@ const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps)
   }, [data.inputConfig.refInputs])
 
   return (
-    <Space orientation="vertical" size="large" style={{ width: '100%', padding: 16 }}>
+    <Space orientation="vertical" style={{ width: '100%', padding: 16 }}>
       {/* ===== 提示信息 ===== */}
-      <Alert
-        type="info"
-        showIcon
-        icon={<InfoCircleOutlined />}
-        title={"变量使用"}
-        description={
+        <Typography.Paragraph>
           <Typography.Text style={{ fontSize: 12 }}>
             在编辑节点属性时，可通过{' '}
             <Typography.Text code>{'{变量名}'}</Typography.Text>{' '}
-            来引用各输入节点的变量。
+            来引用各上游节点的输出变量。
           </Typography.Text>
-        }
-      />
+        </Typography.Paragraph>
 
       {/* ===== 上游节点变量 ===== */}
-      <div>
-        <Typography.Title level={5} style={{ marginBottom: 8 }}>
-          可用变量
-        </Typography.Title>
-
-        <Card
-          size="small"
-          styles={{ body: { padding: 12 } }}
-          variant='borderless'
-        >
-          {preVariable && preVariable.length > 0 ? (
-            <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
-              {preVariable.map((item: any) => (
-                <Card
-                  key={item.nodeId}
-                  size="small"
-                  styles={{ body: { padding: 12 } }}
-                >
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: 12 }}
-                  >
-                    来自节点：{item.nodeId}
-                  </Typography.Text>
-
-                  <div style={{ marginTop: 8 }}>
-                    <Space wrap size={[8, 8]}>
-                      {item.data.map((v: any, index: number) => (
-                        <Tooltip
-                          key={`${item.nodeId}-${v.name}-${index}`}
-                          title={`${v.label} - ${GetInputType(v.type).label} 类型`}
-                        >
-                          <Tag
-                            color="blue"
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {v.name}
-                          </Tag>
-                        </Tooltip>
-                      ))}
-                    </Space>
+      <Collapse size='small' defaultActiveKey={['canUseVariable']}>
+        <Collapse.Panel header="可用变量" key="canUseVariable">
+          {preVariable.length > 0 ? <div className='flex flex-col gap-2'>
+            {(preVariable.map((item: any) => {
+              const nodeData = getNode(item.nodeId)?.data as any;
+              return (
+                <div >
+                  <Typography.Title type='secondary' style={{ fontSize: 12 }}>
+                    {nodeData.label}
+                  </Typography.Title>
+                  <div className='flex gap-2 items-center'>
+                    {item.data.map((v: any, index: number) => (
+                      <Tooltip
+                        key={`${item.nodeId}-${v.name}-${index}`}
+                        title={`${v.label} - ${GetInputType(v.type).label} 类型`}
+                      >
+                        <InputVariableDisplay
+                          name={v.name}
+                        />
+                      </Tooltip>
+                    ))}
                   </div>
-                </Card>
-              ))}
-            </Space>
-          ) : (
+                </div>
+              )
+            }))}
+          </div> :
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
               暂无可用变量
-            </Typography.Text>
-          )}
-        </Card>
-      </div>
+            </Typography.Text>}
+        </Collapse.Panel>
 
-      {/* ===== 引用输入变量 ===== */}
-      {type !== 'userInput' && (
-        <div>
-          <Typography.Title level={5} style={{ marginBottom: 8 }}>
-            引用节点变量
-          </Typography.Title>
+        <Collapse.Panel header="已引用的变量" key="refVariable">
+          {refInputs.length > 0 ? (<div className='flex gap-2'>
+            {refInputs.map((item: any) => {
+              const nodeData = getNode(item.nodeId)?.data as any;
+              return <InputVariableDisplay
+                prefix={nodeData.label}
+                name={item.name}
+              />
+            })}
 
-          <Card
-            size="small"
-            styles={{ body: { padding: 12 } }}
-          >
-            {refInputs && refInputs.length > 0 ? (
-              <Space wrap size={[8, 8]}>
-                {refInputs.map((item: any) => (
-                  <Tooltip
-                    key={`${item.nodeId}-${item.nodeParamName}`}
-                    title={`来自节点：${item.nodeId}`}
-                  >
-                    <Tag
-                    color='blue'
-                      style={{ cursor: 'pointer', }}
-                    >
-                                              {`{${item.nodeParamName}}`}
+          </div>) :
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              当前节点没有引用任何变量
+            </Typography.Text>}
+        </Collapse.Panel>
 
-                    </Tag>
-                  </Tooltip>
-                ))}
-              </Space>
-            ) : (
-              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                暂无可用变量
-              </Typography.Text>
-            )}
-          </Card>
-        </div>
-      )}
+        {type !== BuilderNode.END && (
+          <Collapse.Panel header="输出变量" key="outputVariable">
+            {nodeData.nodeOutput.length > 0 ? nodeData.nodeOutput.map((ref: any) => (
+              <OutputVariableDisplay name={ref.name} type={ref.type} desc={ref.label} />
+            )) : <Empty description='该节点暂无输出变量' />}
+          </Collapse.Panel>
+        )}
+      </Collapse>
 
-      {/* ===== 输出变量 ===== */}
-      {type !== BuilderNode.END && (
-        <div>
-          <Typography.Title level={5} style={{ marginBottom: 8 }}>
-            输出变量
-          </Typography.Title>
 
-          <Card
-            size="small"
-            styles={{ body: { padding: 12 } }}
-          >
-            {nodeData.nodeOutput.length > 0 ? (
-              <Space orientation="vertical" size="small" style={{ width: '100%' }}>
-                {nodeData.nodeOutput.map((ref: any) => (
-                  <div
-                    key={ref.id + ref.name}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      padding: 8,
-                      borderRadius: token.borderRadius,
-                    }}
-                  >
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: 12 }}
-                    >
-                      {ref.label}
-                    </Typography.Text>
-                    <Typography.Text style={{ color: token.colorPrimary }}>
-                      {ref.name}
-                    </Typography.Text>
-                  </div>
-                ))}
-              </Space>
-            ) : (
-              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                该节点无输出变量
-              </Typography.Text>
-            )}
-          </Card>
-        </div>
-      )}
+
+
     </Space>
   )
 }

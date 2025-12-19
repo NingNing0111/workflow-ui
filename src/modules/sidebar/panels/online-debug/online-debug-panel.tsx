@@ -1,25 +1,20 @@
-import { AntDesignOutlined, BugOutlined, CodeOutlined, UserOutlined } from "@ant-design/icons";
-import { Bubble, type BubbleListProps, type BubbleProps } from "@ant-design/x";
+import { BugOutlined, CodeOutlined } from "@ant-design/icons";
 import XMarkdown from "@ant-design/x-markdown";
 import { useNodesData, useReactFlow } from "@xyflow/react";
-import { Avatar, Empty, Typography, type GetRef } from "antd";
+import { Empty, theme, Typography } from "antd";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SplitPane, { Pane } from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
 
 import { debugWorkflow } from "~/api/workflow";
+import { useSelectNode } from "~/modules/flow-builder/hooks/use-node-selected";
 import { DEFAULT_START_ID, type NodeIOData } from "~/modules/nodes/types";
 import SidebarPanelHeading from "~/modules/sidebar/components/sidebar-panel-heading";
 import SidebarPanelWrapper from "~/modules/sidebar/components/sidebar-panel-wrapper";
 import { DynamicInputForm } from "~/modules/sidebar/panels/online-debug/components/DynamicInputForm";
+import { useDebugStore } from "~/stores/debug-state";
 import { defaultOverlayScrollbarsOptions } from "~/utils/overlayscrollbars";
-
-interface Message {
-    content: string;
-    role: "user" | "assistant";
-    key: string;
-}
 
 type StartNodeData = {
     nodeConfig?: {
@@ -27,24 +22,31 @@ type StartNodeData = {
     };
 };
 
-const renderMarkdown: BubbleProps['contentRender'] = (content) => {
-    return (
-        <Typography>
-            <XMarkdown content={content} />
-        </Typography>
-    );
-};
+
 
 const OnlineDebugPanel = () => {
-    const { getNodes, getEdges } = useReactFlow();
-    const nodeData = useNodesData(DEFAULT_START_ID);
-    const debugBubbleListRef = useRef<GetRef<typeof Bubble.List>>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [sizes, setSizes] = useState<number[]>([320, 180]);
-    const [userInputs, setUserInputs] = useState<NodeIOData[]>([]);
-
+    const {getNodes, getEdges} = useReactFlow();
     const nodes = getNodes();
     const edges = getEdges();
+  const nodeData = useNodesData(DEFAULT_START_ID);
+  const [sizes, setSizes] = useState<number[]>([320, 180]);
+  const [userInputs, setUserInputs] = useState<NodeIOData[]>([]);
+  const { token } = theme.useToken();
+
+  const debugSSE = useDebugStore(s => s.onSSE);
+  const playRun = useDebugStore(s => s.playRun);
+
+  const latestRun = useDebugStore(s => s.getLatestRun());
+  const currentNodeId = latestRun?.currentNodeId;
+  const streamOutput = latestRun?.streamOutput ?? "";
+
+  useSelectNode(currentNodeId, { fitView: true, duration: 300 });
+
+  useEffect(() => {
+    const data = nodeData?.data as StartNodeData | undefined;
+    setUserInputs(data?.nodeConfig?.userInputs ?? []);
+  }, [nodeData?.data]);
+
 
     const debug = (values: Record<string, any>) => {
         // 设置用户消息 和初始化AI消息
@@ -56,17 +58,6 @@ const OnlineDebugPanel = () => {
                 type: input.type,
             },
         }));
-        const userMessage: Message = {
-            content: JSON.stringify(inputs),
-            role: "user",
-            key: `user-${Date.now()}`,
-        };
-        const aiMessage: Message = {
-            content: "",
-            role: "assistant",
-            key: `role-${Date.now()}`
-        }
-        setMessages((prev) => [...prev, userMessage, aiMessage]);
         debugWorkflow({
             workflowId: import.meta.env.VITE_APP_TEXT_WORKFLOW_ID,
             nodes,
@@ -74,48 +65,19 @@ const OnlineDebugPanel = () => {
             inputs
         }, {
             onMessage(event) {
-                console.log(event.data);
-
-                if (event.data.output) {
-                    const text = event.data.output;
-                    debugBubbleListRef.current?.scrollTo({ top: "bottom", behavior: 'smooth' })
-                    setMessages((prev) => {
-                        const lastIndex = prev.findIndex((m) => m.role === "assistant" && m.key === aiMessage.key);
-                        if (lastIndex === -1) return prev;
-
-                        const updated = [...prev];
-                        updated[lastIndex] = {
-                            ...updated[lastIndex],
-                            content: updated[lastIndex].content + text, // 追加新片段
-                        };
-                        return updated;
-                    });
+                if (event.data) {
+                    debugSSE(event.data);
                 }
             },
 
         })
+
+        playRun(import.meta.env.VITE_APP_TEXT_WORKFLOW_ID, 400);
     }
     useEffect(() => {
         const data = nodeData?.data as StartNodeData | undefined;
         setUserInputs(data?.nodeConfig?.userInputs ?? []);
     }, [nodeData?.data]);
-
-    const roleConfig: BubbleListProps["role"] = useMemo(
-        () => ({
-            assistant: {
-                typing: true,
-                header: "AI",
-                avatar: () => <Avatar icon={<AntDesignOutlined />} />,
-                contentRender: renderMarkdown
-            },
-            user: (data) => ({
-                placement: "end",
-                header: `User-${data.key}`,
-                avatar: () => <Avatar icon={<UserOutlined />} />,
-            }),
-        }),
-        []
-    );
 
     return (
         <SidebarPanelWrapper>
@@ -130,17 +92,13 @@ const OnlineDebugPanel = () => {
             >
                 {/* 消息区 */}
                 <Pane minSize={80}>
-
                     <div className="h-full flex flex-col">
                         <SidebarPanelHeading icon={<BugOutlined />} title="调试台" />
                         <OverlayScrollbarsComponent className='grow' defer options={defaultOverlayScrollbarsOptions}>
-                            {messages.length > 0 ? (
-                                <Bubble.List
-                                    className="text-white"
-                                    role={roleConfig}
-                                    items={messages}
-                                    ref={debugBubbleListRef}
-                                />
+                            {streamOutput ? (
+                                <Typography className="px-6 py-2" style={{ backgroundColor: token.colorBgBlur }}>
+                                    <XMarkdown content={streamOutput} />
+                                </Typography>
                             ) : (
                                 <div className="flex h-full items-center justify-center">
                                     <Empty description="输入参数，开始调试" />
