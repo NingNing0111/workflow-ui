@@ -26,3 +26,5 @@
 
 ![](./doc/images/9.png)
 
+**问题分类**
+![](./doc/images/10.png)
