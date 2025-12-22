@@ -33,8 +33,9 @@ export type DebugSSEEvent = {
   runId: string
   workflowId?: string
   mode?: 'DEBUG'
+  error?: string;
 
-  status: 1 | 2 | 3
+  status: -1 | 1 | 2 | 3
 
   nodeId?: string
   duration?: number
@@ -89,6 +90,10 @@ export const useDebugStore = create<DebugStore>((set, get) => ({
           inputs: event.inputs,
           outputs: event.outputs,
         }
+      }
+
+      if(event.status === -1) {
+        run.streamOutput += event.error;
       }
 
       if (typeof event.output === 'string') {
