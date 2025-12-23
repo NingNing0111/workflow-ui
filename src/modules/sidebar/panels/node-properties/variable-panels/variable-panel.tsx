@@ -86,7 +86,7 @@ const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps)
             </Typography.Text>}
         </Collapse.Panel>
 
-        <Collapse.Panel header="已引用的变量" key="refVariable">
+        {/* <Collapse.Panel header="已引用的变量" key="refVariable">
           {refInputs.length > 0 ? (<div className='flex gap-2'>
             {refInputs.map((item: any) => {
               const nodeData = getNode(item.nodeId)?.data as any;
@@ -100,7 +100,7 @@ const NodeVariablePropertiesPanel = ({ id, type, data }: NodeVariablePanelProps)
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
               当前节点没有引用任何变量
             </Typography.Text>}
-        </Collapse.Panel>
+        </Collapse.Panel> */}
 
         {type !== BuilderNode.END && (
           <Collapse.Panel header="输出变量" key="outputVariable">

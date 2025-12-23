@@ -22,7 +22,7 @@ export default defineConfig({
       '/prod-api': {
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/prod-api/, ''),
-        target: 'http://43.143.218.56:9105/prod-api',
+        target: 'http://localhost:8080',
         ws: true,
       },
     },

@@ -28,7 +28,6 @@ export type DebugRunState = {
   endTime?: number
 }
 
-
 export type DebugSSEEvent = {
   runId: string
   workflowId?: string
